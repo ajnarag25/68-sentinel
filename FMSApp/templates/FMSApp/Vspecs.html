@@ -1,0 +1,39 @@
+{% extends "FMSApp/base.html" %}
+{% load static %}
+{% block content %}
+
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="text-center mb-0">VEHICLE SPECIFICATIONS</h1>
+        <div>
+            <a class="btn btn-dark mr-3" href="{% url 'Input_VSpecs' %}">
+                <i class="fa fa-plus"></i> Add
+            </a>
+            <a class="btn btn-dark" style="color:white" href="{% url 'exportVSpecs' %}"> Export </a>
+        </div>
+    </div>
+    <table class="table table-bordered table-striped table-hover text-center" style="color:rgb(21, 21, 21);">
+        <thead>
+            <tr>
+                <th>Chassis Number</th>
+                <th>ACU Company</th>
+                <th>Wheeler Type</th>
+                <th>Engine</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vspec in vspecs %}
+            <tr>
+                <td>{{ vspec.ChassisNumber }}</td>
+                <td>{{ vspec.ACUCompany }}</td>
+                <td>{{ vspec.WheelerType }}</td>
+                <td>{{ vspec.Engine }}</td>
+                <td><a class ="btn" style="background-color: #444444;color: white;" href="{% url 'Update_VSpecsPage' pk=vspec.pk %}">Update</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

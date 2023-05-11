@@ -1,0 +1,39 @@
+{% extends "FMSApp/base.html" %}
+{% load static %}
+{% block content %}
+
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="text-center mb-0">DRIVER DETAILS</h1>
+        <div>
+            <a class="btn btn-dark mr-3" href="{% url 'Input_DDetails' %}">
+                <i class="fa fa-plus"></i> Add
+            </a>
+            <a class="btn btn-dark" style="color:white" href="{% url 'exportDDetails' %}"> Export </a>
+        </div>
+    </div>
+    <table class="table table-bordered table-striped table-hover text-center" style="color:rgb(21, 21, 21);">
+        <thead>
+            <tr>
+                <th>Driver's Name</th>
+                <th>Driver's Age</th>
+                <th>Driver's Medical Conditions (if any)</th>
+                <th>Driver's License Number</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ddetail in ddetails %}
+            <tr>
+                <td>{{ ddetail.DriversName }}</td>
+                <td>{{ ddetail.DriversAge }}</td>
+                <td>{{ ddetail.DriversMedicalCondition }}</td>
+                <td>{{ ddetail.DriversLicenseNumber }}</td>
+                <td><a class ="btn" style="background-color: #444444;color: white;" href="{% url 'Update_DDetailsPage' pk=ddetail.pk %}">Update</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

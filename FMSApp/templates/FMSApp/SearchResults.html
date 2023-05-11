@@ -1,0 +1,97 @@
+{% extends "FMSApp/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container d-flex justify-content-center align-items-center h-200">
+    <div class="card w-80 col-9 mx-auto">
+      <div class="card-body">
+        <div class="col-10 mx-auto">
+        </div>
+        <div class="container py-4">
+            {% if searched %}
+                <h3 class="card-title text-center">Search Results: {{searched}}</h3>
+                <br>
+                <table class="table table-bordered table-striped table-hover text-center" style="color:rgb(21, 21, 21);">
+                    <thead>
+                        <tr>
+                            <th>Plate Number</th>
+                            <th>Vehicle Brand</th>
+                            <th>Vehicle Model</th>
+                            <th>Gas Consumption</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vdetail in vdetails %}
+                            <tr>
+                                <td>{{ vdetail.PlateNumber }}</td>
+                                <td>{{ vdetail.VehicleBrand }}</td>
+                                <td>{{ vdetail.VehicleModel }}</td>
+                                <td>{{ vdetail.GasConsumption }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+<!-- __________________________________________________________________________CODE LINE BREAK__________________________________________________________________________ -->
+
+                <br>
+                <hr>
+                <br>    
+                <table class="table table-bordered table-striped table-hover text-center" style="color:rgb(21, 21, 21);">
+                    <thead>
+                        <tr>
+                            <th>Driver Name</th>
+                            <th>Driver Age</th>
+                            <th>Driver Medical Condition</th>
+                            <th>Driver License Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ddetail in ddetails %}
+                            <tr>
+                                <td>{{ ddetail.DriversName }}</td>
+                                <td>{{ ddetail.DriversAge }}</td>
+                                <td>{{ ddetail.DriversMedicalCondition }}</td>
+                                <td>{{ ddetail.DriversLicenseNumber }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+
+
+<!-- __________________________________________________________________________CODE LINE BREAK__________________________________________________________________________ -->
+
+                <br>
+                <hr>
+                <br>    
+                <table class="table table-bordered table-striped table-hover text-center" style="color:rgb(21, 21, 21);">
+                    <thead>
+                        <tr>
+                            <th>Chassis Number</th>
+                            <th>ACU Company</th>
+                            <th>Wheeler Type</th>
+                            <th>Engine</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vspec in vspecs %}
+                            <tr>
+                                <td>{{ vspec.ChassisNumber }}</td>
+                                <td>{{ vspec.ACUCompany }}</td>
+                                <td>{{ vspec.WheelerType }}</td>
+                                <td>{{ vspec.Engine }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+
+            {% else %}
+                <h3 class="card-title text-center">You did not search for anything</h3>
+            {% endif %}
+        </div>
+    </div>
+</div>
+        
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends "FMSApp/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="text-center mb-0">VEHICLE DETAILS</h1>
+        <div>
+            <a class="btn btn-dark mr-3" href="{% url 'Input_VDetails' %}">
+                <i class="fa fa-plus"></i> Add  
+            </a>
+            <a class="btn btn-dark" style="color:white" href="{% url 'exportVDetails' %}"> Export </a>
+        </div>
+    </div>
+        <table class="table table-bordered table-striped table-hover text-center" style="color:rgb(21, 21, 21);">
+            <thead>
+                <tr>
+                    <th>Plate Number</th>
+                    <th>Vehicle Brand</th>
+                    <th>Vehicle Model</th>
+                    <th><a href="{% url 'MSchedPage' %}" style="color: black;">Maintenance Schedule</a></th>
+                    <th><a href="{% url 'DeploymentPage' %}" style="color: black;">Deployment Schedule</a></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vdetail in vdetails %}
+                <tr>
+                    <td>{{ vdetail.PlateNumber }}</td>
+                    <td>{{ vdetail.VehicleBrand }}</td>
+                    <td>{{ vdetail.VehicleModel }}</td>
+                {% endfor %}
+            </tbody>
+        </table>
+          
+    </div>
+
+{% endblock %}
+
+
+
+
+<!--
+    <style>
+        table {
+          margin: auto;
+          width: 95%; /* Set the width of the table to 95% of its container */
+        }
+      </style>
+      
+      <table id="myTable" border="1">
+        <thead>
+          <tr>
+            <th>Column 1 Title</th>
+            <th>Column 2 Title</th>
+            <th>Column 3 Title</th>
+            <th>Column 4 Title</th>
+            <th>Column 5 Title</th>
+            <th>Column 6 Title</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Data 1</td>
+            <td>Data 2</td>
+            <td>Data 3</td>
+            <td>Data 4</td>
+            <td>Data 5</td>
+            <td>Data 6</td>
+          </tr>
+          <tr>
+            <td>Data 1</td>
+            <td>Data 2</td>
+            <td>Data 3</td>
+            <td>Data 4</td>
+            <td>Data 5</td>
+            <td>Data 6</td>
+          </tr>
+
+          // Add more rows as needed, or remove these sample rows 
+        </tbody>
+      </table> 
+         
+      <script>
+        // This JavaScript code will update the table with new rows whenever new data is added
+        function updateTable() {
+          // Get a reference to the table
+          var table = document.getElementById("myTable");
+          
+          // Create a new row for the table
+          var newRow = document.createElement("tr");
+          
+          // Add the data for each column to the row
+          var column1 = document.createElement("td");
+          var column2 = document.createElement("td");
+          var column3 = document.createElement("td");
+          var column4 = document.createElement("td");
+          var column5 = document.createElement("td");
+          var column6 = document.createElement("td");
+          column1.textContent = "New Data 1";
+          column2.textContent = "New Data 2";
+          column3.textContent = "New Data 3";
+          column4.textContent = "New Data 4";
+          column5.textContent = "New Data 5";
+          column6.textContent = "New Data 6";
+          newRow.appendChild(column1);
+          newRow.appendChild(column2);
+          newRow.appendChild(column3);
+          newRow.appendChild(column4);
+          newRow.appendChild(column5);
+          newRow.appendChild(column6);
+          
+          // Add the new row to the table
+          table.appendChild(newRow);
+        }
+        
+        // Call the updateTable function whenever new data is added
+        updateTable();
+      </script>
+-->

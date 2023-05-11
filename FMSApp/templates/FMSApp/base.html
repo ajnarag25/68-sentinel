@@ -1,0 +1,325 @@
+{% load static %}
+
+<html>
+
+
+    <head>
+        <title>68SentinelsFMS</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+        <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Source+Sans+Pro&display=swap" rel="stylesheet"> 
+        <link rel="stylesheet" href="{% static '/bootstrap/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static '/bootstrap/css/custom.css' %}">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <script src="{% static '/bootstrap/jquery-3.4.1.slim.min.js' %}"></script>
+        <script src="{% static '/bootstrap/popper.min.js' %}"></script>
+        <script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>
+        <style>
+        .filter-option {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #333;
+          }
+          
+          /* .filter-option:hover {
+            background-color: #f5f5f5;
+          } */
+
+        .selected {
+            background-color: #444444;
+            color: white;
+          }
+
+        </style>
+
+    </head>
+</html>
+
+<body>
+    <div class="navbar navbar-dark bg-custom mb-3" style="background-color: #444444;">
+        <div class="col-2">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#fullHeightModalRight" style="background-color:#4444; color:white"><b>
+                <img src="{% static 'media/haha.png' %}" alt="haha" width="40" height="40">
+            </b></button>
+            
+            <!-- Full Height Modal Right -->
+            <div class="modal fade right" id="fullHeightModalRight">
+            
+                <div class="modal-dialog">
+                <div class="modal-content ">
+
+                    <div class="modal-header">
+                        <div class="col-3"></div>
+                            <div class="col-9">
+                                <h4>NAVIGATION BAR</h4>
+                            </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div>
+                            <ul class="nav justify-content-center">
+                                <li><a href="{% url 'main_menu' %}" class="btn">Main Menu</a></li>
+                            </ul>
+
+                            <ul class="nav justify-content-center">
+                              <li><a class="btn" data-toggle="collapse" href="#input" role="button">Input Screens</a></li>
+                            </ul>
+                              <div class="collapse" id="input">
+                                <div class="card card-body">
+                                  <ul class="nav justify-content-center">
+                                      <li><a href="{% url 'Input_VDetails' %}" class="btn">Input Vehicle Details</a></li>
+                                  </ul>
+                                  <ul class="nav justify-content-center">
+                                      <li><a href="{% url 'Input_VSpecs' %}" class="btn">Input Vehicle Specifications</a></li>
+                                  </ul>
+                                  <ul class="nav justify-content-center">
+                                      <li><a href="{% url 'Input_DDetails' %}" class="btn">Input Driver Details</a></li>
+                                  </ul>
+                                  <ul class="nav justify-content-center">
+                                    <li><a href="{% url 'Input_MSched' %}" class="btn">Input Maintenance Schedule</a></li>
+                                </ul>
+                                <ul class="nav justify-content-center">
+                                  <li><a href="{% url 'Input_Deployment' %}" class="btn">Input Deployment Schedule</a></li>
+                              </ul>
+                                </div>
+                              </div>
+
+                            <ul class="nav justify-content-center">
+                              <li><a class="btn" data-toggle="collapse" href="#view" role="button">View Screens</a></li>
+                            </ul>
+                              <div class="collapse" id="view">
+                                <div class="card card-body">
+                                  <ul class="nav justify-content-center">
+                                    <li><a href="{% url 'Vdetails' %}" class="btn">View Vehicle Details</a></li>
+                                  </ul>
+                                  <ul class="nav justify-content-center">
+                                      <li><a href="{% url 'Vspecs' %}" class="btn">View Vehicle Specifications</a></li>
+                                  </ul>
+                                  <ul class="nav justify-content-center">
+                                      <li><a href="{% url 'Ddetails' %}" class="btn">View Driver Details</a></li>
+                                  </ul>
+                                  <ul class="nav justify-content-center">
+                                    <li><a href="{% url 'MSchedPage' %}" class="btn">View Maintenance Schedule</a></li>
+                                  </ul>
+                                  <ul class="nav justify-content-center">
+                                    <li><a href="{% url 'DeploymentPage' %}" class="btn">View Deployment Schedule</a></li>
+                                  </ul>
+                                </div>
+                              </div>                          
+
+                            <ul class="nav justify-content-center">
+                                <li><a href="{% url 'logout' %}" class="btn">Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h2 class="text-center mt-2 ml-4"><a href="{% url 'main_menu' %}" style="color:white;text-decoration:none;font-family:Impact">68 SENTINEL</a></h2>
+        </div>
+        <div class="row">
+          <div class="col-md-10 d-flex align-items-center ml-auto">
+            
+            
+            <div class="btn-group">
+              {% if notif and notif.count > 0 %}
+              <a type="button" class="m-3 text-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bell"></i><span class="badge badge-danger bell" >{{unread_notif.count}}</span></a>
+              {% else %}
+              <a type="button" class="m-3 text-white"><i class="fas fa-bell"></i></a>
+              {% endif %}
+              <div class="dropdown-menu dropdown-menu-right">
+              
+              <div class="list-group">
+                {% for notif in notif %}
+                  <a href="{% url 'MSchedPage' notif_id=notif.id %}" class="{% if notif.opened is False %}font-weight-bold{% endif %} list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{ notif.user.username }}</h5>
+                      <small>{{ notif.task.remaining_days}} day(s) left</small>
+                    </div>
+                    <p class="mb-1">{{ notif.task.description }}</p>
+                    <small>{{ notif.task.title }}</small>
+                  </a>
+                {% endfor %}
+                
+                <!-- <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">List group item heading</h5>
+                    <small class="text-muted">3 days ago</small>
+                  </div>
+                  <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                  <small class="text-muted">Donec id elit non mi porta.</small>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">List group item heading</h5>
+                    <small class="text-muted">3 days ago</small>
+                  </div>
+                  <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                  <small class="text-muted">Donec id elit non mi porta.</small>
+                </a> -->
+              </div>
+              </div> 
+            </div>
+
+            
+            <form class='input-group mt-3' method="POST" action="{% url 'SearchResults' %}"> {% csrf_token %}
+              <input type="search" class="form-control rounded" placeholder="Search" name="searched">
+              <div class="input-group-append">
+        
+                <select id="page" class="btn btn-secondary dropdown-toggle" name="page">
+                    <option value="VD" name="page">Vehicle Details</option>
+                    <option value="VS" name="page">Vehicle Specifications</option>
+                    <option value="DD" name="page">Driver Details</option>
+                    <option value="A" name="page">All</option>
+                </select>
+
+                <!--
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+                    Filter by
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#">Vehicle Details</a>
+                    <a class="dropdown-item" href="#">Vehicle Specifications</a>
+                    <a class="dropdown-item" href="#">Driver Details</a>
+                    <a class="dropdown-item" href="#">All</a>
+                  </div>
+                </div>
+                !-->
+        
+                <button type="submit" class="btn btn-outline-secondary">search</button>
+              </div>
+            </form>
+        
+            <button type="button" class="btn btn-secondary ml-2" data-toggle="modal" data-target="#searchModal" style="background-color:#4444; color:white"><i class="fa fa-filter"></i></button>
+          </div>
+        </div>        
+    
+            <div class="modal fade" id="searchModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                  <div class="modal-header">
+                    <h3 class="modal-title" id="searchModalLabel">Search Filters</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <form method="POST" action="{% url 'FilteredSearchResults' %}"> {% csrf_token %}
+                    <div class="modal-body">
+                      <h5>Date Updated:</h5>
+                      <div class="filter-options">
+                        <input type="button" name="24_hours" value="Last 24 Hours" data-id="Last 24 Hours" class="filter-option">
+                        <input type="button" name="week" value="This Week" data-id="This Week" class="filter-option">
+                        <input type="button" name="month" value="This Month" data-id="This Month" class="filter-option">
+                        <input type="button" name="all_time" value="All Time" data-id="All Time" class="filter-option">
+                        <hr>
+                      </div>
+                    </div>
+
+                      <div class="modal-body">
+                        <h5>Supplier:</h5>
+                        <div class="filter-options">
+                          <input type="button" name="x" value="X Supplier" class="filter-option">
+                          <input type="button" name="y" value="Y Supplier" class="filter-option">
+                          <input type="button" name="z" value="Z Supplier" class="filter-option">
+                          <input type="button" name="all_suppliers" value="All Suppliers" class="filter-option">
+                          <hr>
+                          </div>
+                    </div>
+
+                      <div class="modal-body">
+                        <h5>Vehicle Model:</h5>
+                        <div class="filter-options">
+                          <input type="button" name="toyota" value="Toyota" class="filter-option">
+                          <input type="button" name="chevrolet" value="Chevrolet" class="filter-option">
+                          <input type="button" name="nissan" value="Nissan" class="filter-option">
+                          <input type="button" name="all_models" value="All Models" class="filter-option">
+                          <hr>
+                        </div>
+                      </div>
+
+                      <div class="modal-body">
+                        <h5>Vehicle Brand:</h5>
+                        <div class="filter-options">
+                          <input type="button" name="landcruiser" value="Toyota Land Cruiser" class="filter-option">
+                          <input type="button" name="suburban" value="Chevrolet Suburban" class="filter-option">
+                          <input type="button" name="patrol" value="Nissan Patrol" class="filter-option">
+                          <input type="button" name="all_brands" value="All Brands" class="filter-option">
+                          <hr>
+                        </div>
+                      </div>
+
+                      <div class="modal-body">
+                        <h5>Wheeler Type:</h5>
+                        <div class="filter-options">
+                          <input type="button" name="4" value="4-Wheeler" class="filter-option">
+                          <input type="button" name="6" value="6-Wheeler" class="filter-option">
+                          <input type="button" name="8" value="8-Wheeler" class="filter-option">
+                          <input type="button" name="all_wheeler" value="All Wheeler Types" class="filter-option">
+                          <hr>
+                        </div>
+                      </div>
+
+                      <div class="modal-body">
+                        <h5>Engine Type:</h5>
+                        <div class="filter-options">
+                          <input type="button" name="diesel" value="Diesel" class="filter-option">
+                          <input type="button" name="gas" value="Gasoline" class="filter-option">
+                          <input type="button" name="turbo" value="Twin Turbo" class="filter-option">
+                          <input type="button" name="all_engine" value="All Engine Types" class="filter-option">
+                          <hr>
+                        </div>
+                      </div>
+
+                      <div class="modal-body">
+                        <h5>Repairs Needed:</h5>
+                        <div class="filter-options">
+                          <input type="button" name="oil" value="Change Oil" class="filter-option">
+                          <input type="button" name="chassisrepair" value="Under Chassis Repair" class="filter-option">
+                          <input type="button" name="aircon" value="Install Aircon" class="filter-option">
+                          <input type="button" name="rewiring" value="Rewiring" class="filter-option">
+                          <input type="button" name="repairs" value="All Repairs" class="filter-option">
+                          <hr>
+                        </div>
+                      </div>
+
+                <div class="modal-footer">
+                <button type="submit" class="btn btn-secondary">Apply Filters</button>
+                </div>
+              </form>
+
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      var buttons = document.querySelectorAll('.filter-option');
+      buttons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          button.classList.toggle('selected');
+        });
+      });
+    </script>      
+
+<div class="container-fluid">
+  <div class="row">
+      
+      {% block content %}
+      {% endblock %}
+
+  </div>
+</div>  
+</body>
+</html>

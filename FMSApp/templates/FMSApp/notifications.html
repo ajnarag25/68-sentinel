@@ -1,0 +1,20 @@
+{% extends "FMSApp/base.html" %}
+{% load static %}
+
+{% block content %}
+
+  <h1>Notifications</h1>
+    {% if notifications %}
+    <ul class="list-group">
+      {% for notification in notifications %}
+        <li class="list-group-item {% if not notification.is_read %} list-group-item-danger{% endif %}">
+          <a href="{{ notification.target }}">{{ notification.message }}</a>
+          <span class="badge badge-secondary">{{ notification.timestamp|date:'F j, Y, g:i a' }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+      <p>No notifications.</p>
+    {% endif %}
+  
+{% endblock %}

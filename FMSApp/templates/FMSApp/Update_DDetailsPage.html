@@ -1,0 +1,58 @@
+{% extends "FMSApp/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="col-2">
+    <ul class="nav" style="margin-left:30px">
+        <li><a href="{% url 'Ddetails' %}" class="btn">Driver Details Screen</a></li>
+    </ul>
+</div>
+
+<div class="card col-4" style="margin-left:16.67%;background-color: #444444;">
+    <div class="row breadcrumb justify-content-center" style="background-color:#444444;color:white">
+        <div>
+            <h3>DRIVER DETAILS</h3>
+            <p style="color:#B8B8B8;text-align: center;">Update Driver Details!</p>
+        </div>
+    </div>
+
+    <form id="UpdateDDetails" method="POST" action="{% url 'Update_DDetailsPage' pk=ddetails.pk %}"> {% csrf_token %}
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white"><b>Driver's Name</b></label>
+            <input type="text" class="form-control" name="dN" id="dN" value="{{ ddetails.DriversName }}">
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>Driver's Age</b></label>
+            <input type="text" class="form-control" name="dA" id="dA" value="{{ ddetails.DriversAge }}">
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>Driver's Medical Conditions (if any)</b></label>
+            <input type="text" class="form-control" name="mC" id="mC" value="{{ ddetails.DriversMedicalCondition }}">
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>Driver's License Number</b></label>
+            <input type="text" class="form-control" name="lN" id="lN" value="{{ ddetails.DriversLicenseNumber }}">
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <input type="submit" value="Update" class="btn btn-secondary col-6" style="background-color:#242424">
+    </div>
+    </form>
+    <div class="row justify-content-center">
+        <a href="{% url 'deleteDDetailButton' pk=ddetails.pk %}" class="btn btn-danger col-6" style="background-color:#f94b4b">DELETE DRIVER</a>
+    </div>
+    <br><br><br><br><br><br>
+</div>
+
+{% endblock %}

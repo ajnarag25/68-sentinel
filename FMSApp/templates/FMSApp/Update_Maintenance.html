@@ -1,0 +1,63 @@
+{% extends "FMSApp/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="col-2">
+    <ul class="nav" style="margin-left:30px">
+        <li><a href="{% url 'MSchedPage' %}" class="btn">Maintenance Schedule</a></li>
+    </ul>
+</div>
+
+<div class="card col-4" style="margin-left:16.67%;background-color: #444444;">
+    <div class="row breadcrumb justify-content-center" style="background-color:#444444;color:white">
+        <div>
+            <h3>Maintenance Schedule</h3>
+            <p style="color:#B8B8B8;text-align: center;">Update Maintenance Schedule!</p>
+        </div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label for="date" style="color:white"><b>Date</b></label>
+            <input type="date" class="form-control" id="date" name="date" value="{{ maintenance.Date }}" required>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label for="select" style="color:white;"><b>Type of Repair and Maintenance</b></label>
+            <select class="form-control" name="select" id="select" onchange="showCustomInput()">
+                <option value="" {% if not maintenance.TypeofRepairandMaintenance %} selected {% endif %}>Select Option</option>
+                {% for maintenance_type in maintenance_types %}
+                <option value="{{ maintenance_type }}" {% if maintenance.TypeofRepairandMaintenance == maintenance_type %} selected {% endif %}>{{ maintenance_type }}</option>
+                {% endfor %}
+                <option value="Other" {% if maintenance.TypeofRepairandMaintenance != "" and maintenance.TypeofRepairandMaintenance not in maintenance_types %} selected {% endif %}>Other</option>
+              </select>
+            <div id="customInputContainer" {% if maintenance.TypeofRepairandMaintenance in maintenance_types %} style="display:none" {% endif %}>
+                <input type="text" id="customInput" name="customInput" placeholder="Enter Option" value="{{ maintenance.TypeofRepairandMaintenance }}">
+            </div>
+            <script>
+                function showCustomInput() {
+                    var selectElement = document.getElementById("select");
+                    var customInputContainer = document.getElementById("customInputContainer");
+                    if (selectElement.value === "Other") {
+                        customInputContainer.style.display = "block";
+                    } else {
+                        customInputContainer.style.display = "none";
+                    }
+                }
+            </script>
+          <br><br>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <input type="submit" value="Update Maintenance Schedule" class="btn btn-secondary col-6" style="background-color:#242424">
+    </div>
+    </form>
+    <br><br><br><br><br><br>
+</div>
+
+{% endblock %}

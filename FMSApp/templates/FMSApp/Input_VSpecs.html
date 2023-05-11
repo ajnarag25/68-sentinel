@@ -1,0 +1,88 @@
+{% extends "FMSApp/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="col-2">
+    <ul class="nav" style="margin-left:30px">
+        <li><a href="{% url 'main_menu' %}" class="btn">Back to Main Menu</a></li>
+    </ul>
+    <ul class="nav" style="margin-left:30px">
+        <li><a href="{% url 'Vspecs' %}" class="btn">Vehicle Specifications Screen</a></li>
+    </ul>
+</div>
+
+<div class="card col-4" style="margin-left:16.67%;background-color: #444444;">
+    <div class="row breadcrumb justify-content-center" style="background-color:#444444;color:white">
+        <div>
+            <h3>VEHICLE SPECIFICATIONS</h3>
+            <p style="color:#B8B8B8;text-align: center;">Input Vehicle Specifications!</p>
+        </div>
+    </div>
+
+    <form id="InputtingVSpecs" method="POST" enctype="multipart/form-data" action="{% url 'Input_VSpecs' %}"> {% csrf_token %}
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white"><b>Chassis Number</b></label>
+            <input type="text" class="form-control" name="cN" id="cN" placeholder="Input Chassis Number" required>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>ACU Company</b></label>
+            <input type="text" class="form-control" name="aC" id="aC" placeholder="Input ACU Company" required>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>Wheeler Type</b></label>
+            <input type="text" class="form-control" name="wT" id="wT" placeholder="Input Wheeler Type"required>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>Engine</b></label>
+            <input type="text" class="form-control" name="eG" id="eG" placeholder="Input Engine" required>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-2">
+            <label style="color:white;"><b>Image/s</b></label>
+            <input type="file" name="upload" accept="image/*">
+        </div>
+        <div class="col-4"></div>
+        <div class="col-2">
+            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#ImageView" style="background-color:#4444; color:white"><b>
+                <img src="{% static 'media/haha.png' %}" alt="haha" width="40" height="40">
+            </b></button>
+        </div>
+        
+        
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <input type="submit" value="Submit" class="btn btn-secondary col-6" style="background-color:#242424">
+    </div>
+    </form>
+    <br><br><br><br><br><br>
+    <div class="modal fade" id="ImageView">
+        <div class="modal-dialog">
+        <div class="modal-content ">
+            <div class="modal-body">
+            {% if file_url %}
+            <div class="col-lg-4 col-md-6 col-sm-12 pb-4">
+              <img src="{{ file_url }}" class="img-fluid">
+            {% else %}
+            <p>No image/s added.</p>
+            {% endif %}
+            </div>
+            </div>
+        </div>
+        </div>                    
+    </div>
+</div>
+
+{% endblock %}

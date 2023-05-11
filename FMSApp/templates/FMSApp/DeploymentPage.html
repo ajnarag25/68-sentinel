@@ -1,0 +1,35 @@
+{% extends "FMSApp/base.html" %}
+{% load static %}
+{% block content %}
+
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="text-center mb-0">DEPLOYMENT SCHEDULE</h1>
+        <div>
+            <a class="btn btn-dark mr-3" href="{% url 'Input_Deployment' %}">
+                <i class="fa fa-plus"></i> Add  
+            </a>
+            <a class="btn btn-dark" style="color:white" href="{% url 'exportDeployment' %}"> Export </a>
+        </div>
+    </div>
+    <table class="table table-bordered table-striped table-hover text-center" style="color:rgb(21, 21, 21);">
+        <thead>
+            <tr>
+                <th>Date Deployed</th>
+                <th>Deployment Location</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for deployment in deployments %}
+            <tr>
+                <td>{{ deployment.Date }}</td>
+                <td>{{ deployment.DeploymentLocation }}</td>
+                <td><a class ="btn" style="background-color: #444444;color: white;" href="{% url 'Update_Deployment' pk=deployment.pk %}">Update</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

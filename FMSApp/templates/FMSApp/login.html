@@ -1,0 +1,35 @@
+{% extends 'FMSApp/loginbase.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="col-5">
+      <div class="card text-white" style="border-radius: 1rem;background-color: #444444;">
+        <div class="card-body p-5 text-center">
+          <form method="POST" action="login">{% csrf_token%}
+
+          <div class="my-5">
+            <p>
+            <img src="{% static 'media/logo.jpg' %}" alt="68 Sentinel Logo" width="70" height="80">
+            </p>
+            <h1 class="mb-2">Login</h1>
+            <p class="text-white-50 mb-5">Enter username and password!</p>
+              {% csrf_token %}
+              
+              <div class="form-group">
+                  <input type="text" class="form-control" id="uN" name="uN" placeholder="Username" required>
+              </div>
+              
+              <div class="form-group">
+                  <input type="password" class="form-control" id="pW" name="pW" placeholder="Password" required>
+              </div>
+              <button class="btn btn-outline-light btn-lg px-5 mb-xl-5" type="submit">Login</button>   
+              <br>
+              <p class="badge badge-danger">{{ invalidLogin }}</p>
+          </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+      
+{% endblock %}

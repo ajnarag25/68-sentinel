@@ -1,0 +1,55 @@
+{% extends "FMSApp/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="col-2">
+    <ul class="nav" style="margin-left:30px">
+        <li><a href="{% url 'Vspecs' %}" class="btn">Vehicle Specifications Screen</a></li>
+    </ul>
+</div>
+
+<div class="card col-4" style="margin-left:16.67%;background-color: #444444;">
+    <div class="row breadcrumb justify-content-center" style="background-color:#444444;color:white">
+        <div>
+            <h3>VEHICLE SPECIFICATIONS</h3>
+            <p style="color:#B8B8B8;text-align: center;">Update Vehicle Specifications!</p>
+        </div>
+    </div>
+
+    <form id="UpdateVSpecs" method="POST" action="{% url 'Update_VSpecsPage' pk=vspecs.pk %}"> {% csrf_token %}
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white"><b>Chassis Number</b></label>
+            <input type="text" class="form-control" name="cN" id="cN" value="{{ vspecs.ChassisNumber }}">
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>ACU Company</b></label>
+            <input type="text" class="form-control" name="aC" id="aC" value="{{ vspecs.ACUCompany }}">
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>Wheeler Type</b></label>
+            <input type="text" class="form-control" name="wT" id="wT" value="{{ vspecs.WheelerType }}">
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>Engine</b></label>
+            <input type="text" class="form-control" name="eG" id="eG" value="{{ vspecs.Engine }}">
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <input type="submit" value="Update" class="btn btn-secondary col-6" style="background-color:#242424">
+    </div>
+    </form>
+    <br><br><br><br><br><br>
+</div>
+
+{% endblock %}

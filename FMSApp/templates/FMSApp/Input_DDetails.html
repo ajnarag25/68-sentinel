@@ -1,0 +1,58 @@
+{% extends "FMSApp/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="col-2">
+    <ul class="nav" style="margin-left:30px">
+        <li><a href="{% url 'main_menu' %}" class="btn">Back to Main Menu</a></li>
+    </ul>
+    <ul class="nav" style="margin-left:30px">
+        <li><a href="{% url 'Ddetails' %}" class="btn">Driver Details Screen</a></li>
+    </ul>
+</div>
+
+<div class="card col-4" style="margin-left:16.67%;background-color: #444444;">
+    <div class="row breadcrumb justify-content-center" style="background-color:#444444;color:white">
+        <div>
+            <h3>DRIVER DETAILS</h3>
+            <p style="color:#B8B8B8;text-align: center;">Input Driver Details!</p>
+        </div>
+    </div>
+
+    <form id="InputtingDDetails" method="POST" action="{% url 'Input_DDetails' %}"> {% csrf_token %}
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white"><b>Driver's Name</b></label>
+            <input type="text" class="form-control" name="dN" id="dN" placeholder="Input Driver's Name" required>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>Driver's Age</b></label>
+            <input type="text" class="form-control" name="dA" id="dA" placeholder="Input Driver's Age" required>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>Driver's Medical Conditions (if any)</b></label>
+            <input type="text" class="form-control" name="mC" id="mC" placeholder="Input Medical Condition" required>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white;"><b>Driver's License Number</b></label>
+            <input type="text" class="form-control" name="lN" id="lN" placeholder="Input License Number" required>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <input type="submit" value="Submit" class="btn btn-secondary col-6" style="background-color:#242424">
+    </div>
+    </form>
+    <br><br><br><br><br><br>
+</div>
+
+{% endblock %}
