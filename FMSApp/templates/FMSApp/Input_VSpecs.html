@@ -18,8 +18,19 @@
             <p style="color:#B8B8B8;text-align: center;">Input Vehicle Specifications!</p>
         </div>
     </div>
-
     <form id="InputtingVSpecs" method="POST" enctype="multipart/form-data" action="{% url 'Input_VSpecs' %}"> {% csrf_token %}
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <label style="color:white"><b>Plate Number</b></label>
+            <select class="form-control" id="plate-number" name="pN" required>
+                <option value="" disabled selected>Select a Designation Plate Number</option>
+                {% for plate_number in plate_numbers %}
+                    <option value="{{ plate_number.id }}">{{ plate_number.PlateNumber }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <br>
     <div class="row justify-content-center">
         <div class="col-8">
             <label style="color:white"><b>Chassis Number</b></label>
@@ -51,7 +62,7 @@
     <div class="row justify-content-center">
         <div class="col-2">
             <label style="color:white;"><b>Image/s</b></label>
-            <input type="file" name="upload" accept="image/*">
+            <input type="file" name="upload" accept="image/*" id="imageUpload">
         </div>
         <div class="col-4"></div>
         <div class="col-2">
@@ -71,13 +82,9 @@
     <div class="modal fade" id="ImageView">
         <div class="modal-dialog">
         <div class="modal-content ">
-            <div class="modal-body">
-            {% if file_url %}
-            <div class="col-lg-4 col-md-6 col-sm-12 pb-4">
-              <img src="{{ file_url }}" class="img-fluid">
-            {% else %}
-            <p>No image/s added.</p>
-            {% endif %}
+            <div class="modal-body text-center">
+                <h3>Image Preview</h3>
+                <img id="imagePreview" style="width:100%" src="#" alt="No Available Preview">
             </div>
             </div>
         </div>

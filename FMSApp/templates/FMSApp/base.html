@@ -10,8 +10,7 @@
         <link rel="stylesheet" href="{% static '/bootstrap/css/bootstrap.css' %}">
         <link rel="stylesheet" href="{% static '/bootstrap/css/custom.css' %}">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
         <script src="{% static '/bootstrap/jquery-3.4.1.slim.min.js' %}"></script>
         <script src="{% static '/bootstrap/popper.min.js' %}"></script>
@@ -128,51 +127,9 @@
         <div>
             <h2 class="text-center mt-2 ml-4"><a href="{% url 'main_menu' %}" style="color:white;text-decoration:none;font-family:Impact">68 SENTINEL</a></h2>
         </div>
+          
         <div class="row">
           <div class="col-md-10 d-flex align-items-center ml-auto">
-            
-            
-            <div class="btn-group">
-              {% if notif and notif.count > 0 %}
-              <a type="button" class="m-3 text-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bell"></i><span class="badge badge-danger bell" >{{unread_notif.count}}</span></a>
-              {% else %}
-              <a type="button" class="m-3 text-white"><i class="fas fa-bell"></i></a>
-              {% endif %}
-              <div class="dropdown-menu dropdown-menu-right">
-              
-              <div class="list-group">
-                {% for notif in notif %}
-                  <a href="{% url 'MSchedPage' notif_id=notif.id %}" class="{% if notif.opened is False %}font-weight-bold{% endif %} list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">{{ notif.user.username }}</h5>
-                      <small>{{ notif.task.remaining_days}} day(s) left</small>
-                    </div>
-                    <p class="mb-1">{{ notif.task.description }}</p>
-                    <small>{{ notif.task.title }}</small>
-                  </a>
-                {% endfor %}
-                
-                <!-- <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">List group item heading</h5>
-                    <small class="text-muted">3 days ago</small>
-                  </div>
-                  <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                  <small class="text-muted">Donec id elit non mi porta.</small>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">List group item heading</h5>
-                    <small class="text-muted">3 days ago</small>
-                  </div>
-                  <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                  <small class="text-muted">Donec id elit non mi porta.</small>
-                </a> -->
-              </div>
-              </div> 
-            </div>
-
-            
             <form class='input-group mt-3' method="POST" action="{% url 'SearchResults' %}"> {% csrf_token %}
               <input type="search" class="form-control rounded" placeholder="Search" name="searched">
               <div class="input-group-append">
@@ -312,7 +269,17 @@
         });
       });
     </script>      
-
+    <script>
+      $(document).ready(function () {
+          $('#imageUpload').change(function () {
+              let reader = new FileReader();
+              reader.onload = function () {
+                  $('#imagePreview').attr('src', reader.result);
+              }
+              reader.readAsDataURL(event.target.files[0]);
+          });
+      });
+  </script>
 <div class="container-fluid">
   <div class="row">
       

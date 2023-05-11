@@ -7,12 +7,3 @@
     color: white;
     text-align: center;
 }
-
-.dropdown-menu-right{
-    min-width: 50rem !important;
-}
-
-.list-group-item:hover{
-    background-color: blue !important;
-    color:white !important;
-}

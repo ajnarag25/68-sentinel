@@ -1,9 +1,7 @@
-import datetime
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from pickle import TRUE
 from django.db import models
-from django.contrib.auth.models import User
+from django.utils.timezone import now
+
 
 class User(models.Model):
     username = models.CharField(max_length=300, unique=True)
@@ -19,8 +17,10 @@ class User(models.Model):
     def __str__(self):
         return str(self.pk) + ": " + self.username
 
+
 class InputVDetail(models.Model):
-    PlateNumber = models.CharField(max_length=100, unique=True)
+    PlateNumber = models.CharField(
+        max_length=100, unique=True, default="abc-123")
     VehicleBrand = models.CharField(max_length=300)
     VehicleModel = models.CharField(max_length=300)
     GasConsumption = models.CharField(max_length=300)
@@ -39,10 +39,12 @@ class InputVDetail(models.Model):
         return self.GasConsumption
 
     def __str__(self):
-        return str(self.pk) + ": " + self.PlateNumber + ", " + self.VehicleBrand + " , " + self.VehicleModel + ", " + self.GasConsumption
-    
+        return str(self.pk) + ": " + self.PlateNumber
+
 
 class InputVSpecs(models.Model):
+    PlateNumber = models.ForeignKey(
+        InputVDetail, on_delete=models.CASCADE, blank=True, null=True)
     ChassisNumber = models.CharField(max_length=100, unique=True)
     ACUCompany = models.CharField(max_length=300)
     WheelerType = models.CharField(max_length=300)
@@ -61,7 +63,7 @@ class InputVSpecs(models.Model):
 
     def getEngine(self):
         return self.Engine
-    
+
     def getVehicleImage(self):
         return self.VehicleImage
 
@@ -70,6 +72,8 @@ class InputVSpecs(models.Model):
 
 
 class InputDDetail(models.Model):
+    PlateNumber = models.ForeignKey(
+        InputVDetail, on_delete=models.CASCADE, blank=True, null=True)
     DriversName = models.CharField(max_length=200)
     DriversAge = models.CharField(max_length=100)
     DriversMedicalCondition = models.CharField(max_length=300)
@@ -93,71 +97,22 @@ class InputDDetail(models.Model):
 
 
 class InputMSched(models.Model):
-    Date = models.DateField()
+    PlateNumber = models.ForeignKey(
+        InputVDetail, on_delete=models.CASCADE, blank=True, null=True)
+    Date = models.DateTimeField(default=now)
     TypeofRepairandMaintenance = models.CharField(max_length=300)
     objects = models.Manager()
 
     def __str__(self):
         return f"{self.date} - {self.repair}"
-    
+
+
 class InputDeploymentSched(models.Model):
-    Date = models.DateField()
+    PlateNumber = models.ForeignKey(
+        InputVDetail, on_delete=models.CASCADE, blank=True, null=True)
+    Date = models.DateTimeField(default=now)
     DeploymentLocation = models.CharField(max_length=100)
     objects = models.Manager()
 
-
     def __str__(self):
         return f"{self.date} - {self.location}"
-    
-@receiver(post_save, sender=InputMSched)
-def create_maintenance_notification(sender, instance, **kwargs):
-    today = datetime.date.today().strftime("%Y-%m-%d")
-    if instance.Date == today:
-        title = 'Maintenance Schedule (Today)'
-    else:
-        title = 'Maintenance Schedule'
-    description = f'{instance.TypeofRepairandMaintenance}  {instance.Date}'
-    existing_task = Task.objects.filter(title=title, due_date=instance.Date, description=description)
-    
-    if(len(existing_task) > 0):
-        return
-    
-    task = Task.objects.create(title=title, description=description, due_date=instance.Date)
-    notification = Notification.objects.create(task=task)
-    print ("category: '%s'" % instance.TypeofRepairandMaintenance)
-
-@receiver(post_save, sender=InputDeploymentSched)
-def create_deployment_notification(sender, instance, **kwargs):
-    today = datetime.date.today().strftime("%Y-%m-%d")
-    if instance.Date == today:        
-        title = 'Maintenance Schedule (Today)'
-    else:
-        title = 'Maintenance Schedule'
-    description = f'{instance.DeploymentLocation}  {instance.Date}'
-    existing_task = Task.objects.filter(title=title, due_date=instance.Date, description=description)
-    
-    if(len(existing_task) > 0):
-        return
-    
-    task = Task.objects.create(title=title, description=description, due_date=instance.Date)
-    notification = Notification.objects.create(task=task)
-    print ("category: '%s'" % instance.DeploymentLocation)
-    
-# for notif
-
-class Task(models.Model):
-    title = models.CharField(max_length=200)
-    description = models.TextField()
-    due_date = models.DateField(unique=True)
-
-    @property
-    def remaining_days(self):
-        remaining = (self.due_date - datetime.date.today()).days
-        return remaining
-
-class Notification(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, unique=True)
-    opened = models.BooleanField(default=False)
-    date = models.DateTimeField(auto_now_add=True, null=True)
-
-    
