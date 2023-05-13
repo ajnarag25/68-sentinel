@@ -13,6 +13,22 @@ from django.db.models import Q
 
 import csv
 
+def header_data(request):
+    vehicle_model = InputVDetail.objects.values('VehicleModel').distinct()
+    vehicle_brand = InputVDetail.objects.values('VehicleBrand').distinct()
+    vehicle_wheeler = InputVSpecs.objects.values('WheelerType').distinct()
+    vehicle_engine = InputVSpecs.objects.values('Engine').distinct()
+    vehicle_repair = InputMSched.objects.values('TypeofRepairandMaintenance').distinct()
+    context = {
+
+        'vehicle_model' : vehicle_model,
+        'vehicle_brand' : vehicle_brand,
+        'vehicle_wheeler' : vehicle_wheeler,
+        'vehicle_engine' : vehicle_engine,
+        'vehicle_repair' : vehicle_repair,
+
+    }
+    return context
 
 def exportVDetails(request):
     vdetails = InputVDetail.objects.all()

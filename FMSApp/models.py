@@ -116,3 +116,8 @@ class InputDeploymentSched(models.Model):
 
     def __str__(self):
         return f"{self.date} - {self.location}"
+
+class DateUpdated(models.Model):
+    PlateNumber = models.ForeignKey(
+        InputVDetail, on_delete=models.CASCADE, blank=True, null=True)
+    date_updated = models.DateTimeField(default=now)

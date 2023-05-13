@@ -15,26 +15,103 @@
         <script src="{% static '/bootstrap/jquery-3.4.1.slim.min.js' %}"></script>
         <script src="{% static '/bootstrap/popper.min.js' %}"></script>
         <script src="{% static '/bootstrap/js/bootstrap.min.js' %}"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz"
+        crossorigin="anonymous">
         <style>
-        .filter-option {
-            display: inline-block;
-            padding: 5px 10px;
-            margin-right: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            text-decoration: none;
-            color: #333;
-          }
-          
-          /* .filter-option:hover {
-            background-color: #f5f5f5;
-          } */
+        ul.ks-cboxtags {
+          list-style: none;
+          padding: 20px;
+        }
+        ul.ks-cboxtags li{
+          display: inline;
+        }
+        ul.ks-cboxtags li label{
+          display: inline-block;
+          background-color: rgba(255, 255, 255, 0.9);
+          border: 2px solid rgba(0, 0, 0, 0.3);
+          color: #000000;
+          border-radius: 25px;
+          white-space: nowrap;
+          margin: 3px 0px;
+          -webkit-touch-callout: none;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+          -webkit-tap-highlight-color: transparent;
+          transition: all .2s;
+        }
 
-        .selected {
-            background-color: #444444;
-            color: white;
-          }
+        ul.ks-cboxtags li label {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        ul.ks-cboxtags li label::before {
+            display: inline-block;
+            font-style: normal;
+            font-variant: normal;
+            text-rendering: auto;
+            -webkit-font-smoothing: antialiased;
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            font-size: 12px;
+            padding: 2px 6px 2px 2px;
+            content: "\f067";
+            transition: transform .3s ease-in-out;
+        }
+
+        ul.ks-cboxtags li input[type="radio"]:checked + label::before {
+            content: "\f00c";
+            transform: rotate(-360deg);
+            transition: transform .3s ease-in-out;
+        }
+
+        ul.ks-cboxtags li input[type="radio"]:checked + label {
+            border: 2px solid #122542;
+            background-color: #000000;
+            color: #fff;
+            transition: all .2s;
+        }
+
+        ul.ks-cboxtags li input[type="radio"] {
+          display: absolute;
+        }
+        ul.ks-cboxtags li input[type="radio"] {
+          position: absolute;
+          opacity: 0;
+        }
+        ul.ks-cboxtags li input[type="radio"]:focus + label {
+          border: 2px solid #0331ca;
+        }
+
+
+
+        
+        
+        ul.ks-cboxtags li input[type="checkbox"]:checked + label::before {
+            content: "\f00c";
+            transform: rotate(-360deg);
+            transition: transform .3s ease-in-out;
+        }
+
+        ul.ks-cboxtags li input[type="checkbox"]:checked + label {
+            border: 2px solid #122542;
+            background-color: #000000;
+            color: #fff;
+            transition: all .2s;
+        }
+
+        ul.ks-cboxtags li input[type="checkbox"] {
+          display: absolute;
+        }
+        ul.ks-cboxtags li input[type="checkbox"] {
+          position: absolute;
+          opacity: 0;
+        }
+        ul.ks-cboxtags li input[type="checkbox"]:focus + label {
+          border: 2px solid #0331ca;
+        }
 
         </style>
 
@@ -59,6 +136,7 @@
                         <div class="col-3"></div>
                             <div class="col-9">
                                 <h4>NAVIGATION BAR</h4>
+                                <p>{{sample}}</p>
                             </div>
                     </div>
 
@@ -92,6 +170,7 @@
                               </div>
 
                             <ul class="nav justify-content-center">
+                              
                               <li><a class="btn" data-toggle="collapse" href="#view" role="button">View Screens</a></li>
                             </ul>
                               <div class="collapse" id="view">
@@ -175,16 +254,20 @@
                   <form method="POST" action="{% url 'FilteredSearchResults' %}"> {% csrf_token %}
                     <div class="modal-body">
                       <h5>Date Updated:</h5>
-                      <div class="filter-options">
-                        <input type="button" name="24_hours" value="Last 24 Hours" data-id="Last 24 Hours" class="filter-option">
-                        <input type="button" name="week" value="This Week" data-id="This Week" class="filter-option">
-                        <input type="button" name="month" value="This Month" data-id="This Month" class="filter-option">
-                        <input type="button" name="all_time" value="All Time" data-id="All Time" class="filter-option">
-                        <hr>
+                      <div class="container">
+                        <ul class="ks-cboxtags">
+                          <li><input type="radio" id="oneday" name="date_updated" value="oneday"><label for="oneday">Last 24 Hours</label></li>
+                          <li><input type="radio" id="thisweek" name="date_updated" value="thisweek"><label for="thisweek">This Week</label></li>
+                          <li><input type="radio" id="thismonth" name="date_updated" value="thismonth"><label for="thismonth">This Month</label></li>
+                          <li><input type="radio" id="alltime" name="date_updated" value="all"><label for="alltime">All Time</label></li>
+                          
+                        </ul>
+                        
                       </div>
+                      <hr>
                     </div>
 
-                      <div class="modal-body">
+                      <!-- <div class="modal-body">
                         <h5>Supplier:</h5>
                         <div class="filter-options">
                           <input type="button" name="x" value="X Supplier" class="filter-option">
@@ -193,62 +276,78 @@
                           <input type="button" name="all_suppliers" value="All Suppliers" class="filter-option">
                           <hr>
                           </div>
-                    </div>
+                    </div> -->
 
                       <div class="modal-body">
                         <h5>Vehicle Model:</h5>
-                        <div class="filter-options">
-                          <input type="button" name="toyota" value="Toyota" class="filter-option">
-                          <input type="button" name="chevrolet" value="Chevrolet" class="filter-option">
-                          <input type="button" name="nissan" value="Nissan" class="filter-option">
-                          <input type="button" name="all_models" value="All Models" class="filter-option">
-                          <hr>
+                        <div class="container">
+                          <ul class="ks-cboxtags">
+                            {% for vmodel in vehicle_model %}
+                            <li><input type="checkbox" id= {{vmodel.VehicleModel}} name="vmodel" value="{{vmodel.VehicleModel}}"><label for={{vmodel.VehicleModel}}>{{vmodel.VehicleModel}}</label></li>
+                          
+                            {% endfor %}
+                            <li><input type="checkbox" id="vmodelall" name="vmodel" value="all" onchange="handleAllCheckboxChange(this)"><label for="vmodelall">All Vehicle Models</label></li>
+                            
+                          </ul>
+                          
                         </div>
+                        <hr>
                       </div>
 
                       <div class="modal-body">
                         <h5>Vehicle Brand:</h5>
-                        <div class="filter-options">
-                          <input type="button" name="landcruiser" value="Toyota Land Cruiser" class="filter-option">
-                          <input type="button" name="suburban" value="Chevrolet Suburban" class="filter-option">
-                          <input type="button" name="patrol" value="Nissan Patrol" class="filter-option">
-                          <input type="button" name="all_brands" value="All Brands" class="filter-option">
-                          <hr>
+                        <div class="container">
+                          <ul class="ks-cboxtags">
+                            {% for vbrand in vehicle_brand %}
+                            <li><input type="checkbox" id="{{vbrand.VehicleBrand}}" name="vbrand" value="{{vbrand.VehicleBrand}}"><label for="{{vbrand.VehicleBrand}}">{{vbrand.VehicleBrand}}</label></li>
+                            {% endfor %}
+                            <li><input type="checkbox" id="vbrandid4" name="vbrand" value="all" onchange="handleAllCheckboxChangeBrand(this)"><label for="vbrandid4">All Vehicle Brands</label></li>
+                              
+                          </ul>
+                          
                         </div>
+                        <hr>
                       </div>
 
                       <div class="modal-body">
                         <h5>Wheeler Type:</h5>
-                        <div class="filter-options">
-                          <input type="button" name="4" value="4-Wheeler" class="filter-option">
-                          <input type="button" name="6" value="6-Wheeler" class="filter-option">
-                          <input type="button" name="8" value="8-Wheeler" class="filter-option">
-                          <input type="button" name="all_wheeler" value="All Wheeler Types" class="filter-option">
-                          <hr>
+                        <div class="container">
+                          <ul class="ks-cboxtags">
+                          {% for vwheeler in vehicle_wheeler %}
+                          <li><input type="checkbox" id="{{vwheeler.WheelerType}}" name="vwheeler" value="{{vwheeler.WheelerType}}"><label for="{{vwheeler.WheelerType}}">{{vwheeler.WheelerType}}</label></li>
+                          {% endfor %}
+                          <li><input type="checkbox" id="vwheeler4" name="vwheeler" value="all" onchange="handleAllCheckboxChangeWheeler(this)"><label for="vwheeler4">All Wheeler Types</label></li>
+                          </ul>
+                          
                         </div>
+                        <hr>
                       </div>
 
                       <div class="modal-body">
                         <h5>Engine Type:</h5>
-                        <div class="filter-options">
-                          <input type="button" name="diesel" value="Diesel" class="filter-option">
-                          <input type="button" name="gas" value="Gasoline" class="filter-option">
-                          <input type="button" name="turbo" value="Twin Turbo" class="filter-option">
-                          <input type="button" name="all_engine" value="All Engine Types" class="filter-option">
-                          <hr>
+                        <div class="container">
+                          <ul class="ks-cboxtags">
+                            {% for vengine in vehicle_engine %}
+                              <li><input type="checkbox" id="{{vengine.Engine}}" name="vengine" value="{{vengine.Engine}}"><label for="{{vengine.Engine}}">{{vengine.Engine}}</label></li>
+                            {% endfor %}
+                          <li><input type="checkbox" id="vengine4" name="vengine" value="all" onchange="handleAllCheckboxChangeEngine(this)"><label for="vengine4">All Engine Types</label></li>
+                          </ul>
                         </div>
+                        <hr>
                       </div>
 
                       <div class="modal-body">
                         <h5>Repairs Needed:</h5>
-                        <div class="filter-options">
-                          <input type="button" name="oil" value="Change Oil" class="filter-option">
-                          <input type="button" name="chassisrepair" value="Under Chassis Repair" class="filter-option">
-                          <input type="button" name="aircon" value="Install Aircon" class="filter-option">
-                          <input type="button" name="rewiring" value="Rewiring" class="filter-option">
-                          <input type="button" name="repairs" value="All Repairs" class="filter-option">
-                          <hr>
+                        <div class="container">
+                          <ul class="ks-cboxtags">
+                            {% for vrepair in vehicle_repair %}
+                              <li><input type="checkbox" id="{{vrepair.TypeofRepairandMaintenance}}" name="vrepair" value="{{vrepair.TypeofRepairandMaintenance}}"><label for="{{vrepair.TypeofRepairandMaintenance}}">{{vrepair.TypeofRepairandMaintenance}}</label></li>
+
+                            {% endfor %}
+                          <li><input type="checkbox" id="vrepair4" name="vrepair" value="all" onchange="handleAllCheckboxChangeRepair(this)"><label for="vrepair4">All Repairs</label></li>
+                          </ul>
                         </div>
+                        <hr>
                       </div>
 
                 <div class="modal-footer">
@@ -261,14 +360,145 @@
         </div>
     </div>
 
+
+    <!---this function is for vehicle model---->
     <script>
-      var buttons = document.querySelectorAll('.filter-option');
-      buttons.forEach(function(button) {
-        button.addEventListener('click', function() {
-          button.classList.toggle('selected');
+      function handleAllCheckboxChange(checkbox) {
+      const otherCheckboxes = document.querySelectorAll('input[type="checkbox"][name="vmodel"]:not([value="all"])');
+      if (checkbox.checked) {
+        otherCheckboxes.forEach(cb => {
+          cb.disabled = true;
+          cb.checked = false;
         });
+      } else {
+        otherCheckboxes.forEach(cb => {
+          cb.disabled = false;
+        });
+      }
+    }
+
+    const otherCheckboxes = document.querySelectorAll('input[type="checkbox"][name="vmodel"]:not([value="all"])');
+    otherCheckboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const allCheckbox = document.querySelector('input[type="checkbox"][name="vmodel"][value="all"]');
+        if (otherCheckboxesChecked()) {
+          allCheckbox.disabled = true;
+          allCheckbox.checked = false;
+        } else {
+          allCheckbox.disabled = false;
+        }
       });
-    </script>      
+    });
+
+    </script>
+    
+
+
+    <!---this function is for vehicle brand---->
+    <script>
+      function handleAllCheckboxChangeBrand(checkbox) {
+      const otherCheckboxes = document.querySelectorAll('input[type="checkbox"][name="vbrand"]:not([value="all"])');
+      if (checkbox.checked) {
+        otherCheckboxes.forEach(cb => {
+          cb.disabled = true;
+          cb.checked = false;
+        });
+      } else {
+        otherCheckboxes.forEach(cb => {
+          cb.disabled = false;
+        });
+      }
+    }
+
+    const otherCheckboxesBrand = document.querySelectorAll('input[type="checkbox"][name="vbrand"]:not([value="all"])');
+    otherCheckboxesBrand.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const allCheckbox = document.querySelector('input[type="checkbox"][name="vbrand"][value="all"]');
+        allCheckbox.disabled = false;
+      });
+    });
+    </script>
+
+
+    <!---this function is for vehicle wheeler---->
+    <script>
+      function handleAllCheckboxChangeWheeler(checkbox) {
+      const otherCheckboxes = document.querySelectorAll('input[type="checkbox"][name="vwheeler"]:not([value="all"])');
+      if (checkbox.checked) {
+        otherCheckboxes.forEach(cb => {
+          cb.disabled = true;
+          cb.checked = false;
+        });
+      } else {
+        otherCheckboxes.forEach(cb => {
+          cb.disabled = false;
+        });
+      }
+    }
+
+    const otherCheckboxesWheeler = document.querySelectorAll('input[type="checkbox"][name="vwheeler"]:not([value="all"])');
+    otherCheckboxesWheeler.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const allCheckbox = document.querySelector('input[type="checkbox"][name="vwheeler"][value="all"]');
+        allCheckbox.disabled = false;
+      });
+    });
+    </script>
+
+
+    <!---this function is for vehicle engine---->
+    <script>
+      function handleAllCheckboxChangeEngine(checkbox) {
+      const otherCheckboxes = document.querySelectorAll('input[type="checkbox"][name="vengine"]:not([value="all"])');
+      if (checkbox.checked) {
+        otherCheckboxes.forEach(cb => {
+          cb.disabled = true;
+          cb.checked = false;
+        });
+      } else {
+        otherCheckboxes.forEach(cb => {
+          cb.disabled = false;
+        });
+      }
+    }
+
+    const otherCheckboxesEngine = document.querySelectorAll('input[type="checkbox"][name="vengine"]:not([value="all"])');
+    otherCheckboxesEngine.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const allCheckbox = document.querySelector('input[type="checkbox"][name="vengine"][value="all"]');
+        allCheckbox.disabled = false;
+      });
+    });
+    </script>
+
+    <!---this function is for vehicle repair---->
+    <script>
+      function handleAllCheckboxChangeRepair(checkbox) {
+      const otherCheckboxes = document.querySelectorAll('input[type="checkbox"][name="vrepair"]:not([value="all"])');
+      if (checkbox.checked) {
+        otherCheckboxes.forEach(cb => {
+          cb.disabled = true;
+          cb.checked = false;
+        });
+      } else {
+        otherCheckboxes.forEach(cb => {
+          cb.disabled = false;
+        });
+      }
+    }
+
+    const otherCheckboxesRepair = document.querySelectorAll('input[type="checkbox"][name="vrepair"]:not([value="all"])');
+    otherCheckboxesRepair.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const allCheckbox = document.querySelector('input[type="checkbox"][name="vrepair"][value="all"]');
+        allCheckbox.disabled = false;
+  
+      });
+    });
+    </script>
+    
+
+
     <script>
       $(document).ready(function () {
           $('#imageUpload').change(function () {
