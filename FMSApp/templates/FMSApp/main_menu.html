@@ -16,57 +16,106 @@
     <table class="table table-bordered table-striped table-hover text-center" style="color:rgb(21, 21, 21);">
         <thead>
             <tr>
-                <th>Plate Number</th>
-                <th>Vehicle Brand</th>
-                <th>Vehicle Model</th>
-                <th>Driver's Name</th>
-                <th>Maintence Schedule</th>
-                <th>Deployment Schedule</th>
-                <th>Deployment Location</th>
+              <th>Plate Number</th>
+              <th>Vehicle Brand</th>
+              <th>Vehicle Model</th>
+              <th>Driver's Name</th>
+              <th>Maintence Schedule</th>
+              <th>Deployment Schedule</th>
+              <th>Deployment Location</th>
             </tr>
         </thead>
         <tbody>
-            {% for detail in vdetails %}
-            {% for show in ddetails %}
+          {% for detail in ddetails %}
+              <tr>
+                  <td><a href="" data-toggle="modal" data-target="#show{{ detail.PlateNumber.PlateNumber }}">{{ detail.PlateNumber.PlateNumber }}</a> </td>
+                  <td>{{ detail.PlateNumber.VehicleBrand }}</td>
+                  <td>{{ detail.PlateNumber.VehicleModel }}</td>
+                  {% for driver in ddriver %}
+                    {% if driver.PlateNumber_id == detail.PlateNumber_id%}
+                    <td>{{ driver.DriversName }}</td>
+                    {% endif %}
+                  {% endfor %}
+                  {% for sched in msched %}
+                    {% if sched.PlateNumber_id == detail.PlateNumber_id%}
+                      <td>{{ sched.Date }}</td>
+                    {% endif %}
+                  {% endfor %}
+                  {% for dep in deploy %}
+                    {% if dep.PlateNumber_id == detail.PlateNumber_id%}
+                        <td>{{ dep.Date }}</td>
+                        <td>{{ dep.DeploymentLocation }}</td>
+                    {% endif %}
+                  {% endfor %}
+              </tr>
 
-                <tr>
-                    <td> <a href="" data-toggle="modal" data-target="#show{{ detail.id }}">{{ detail.PlateNumber }}</a> </td>
-                    <td>{{ detail.VehicleBrand }}</td>
-                    <td>{{ detail.VehicleModel }}</td>
-                    {% comment %} <td>{{ driver.DriversName }}</td>
-                    <td>{{ maintenance.Date }}</td>
-                    <td>{{ deployment.Date }}</td>
-                    <td>{{ deployment.DeploymentLocation }}</td> {% endcomment %}
-
-                    <!--<td>{{ detail.inputvspecs.ChassisNumber }}</td>
-                    <td>{{ detail.inputvspecs.ACUCompany }}</td>
-                    <td>{{ detail.inputvspecs.WheelerType }}</td>
-                    <td>{{ detail.inputvspecs.Engine }}</td>
-                    <td>{{ detail.inputddetail.DriversName }}</td>
-                    <td>{{ detail.inputddetail.DriversAge }}</td>
-                    <td>{{ detail.inputddetail.DriversMedicalCondition }}</td>
-                    <td>{{ detail.inputddetail.DriversLicenseNumber }}</td>
-                    <td>{{ detail.inputmsched.Date }}</td>
-                    <td>{{ detail.inputmsched.TypeofRepairandMaintenance }}</td>
-                    <td>{{ detail.inputdeploymentsched.DeploymentLocation }}</td> -->
-                </tr>
-
-
-              <div class="modal fade" id="show{{ detail.id }}">
-                  <div class="modal-dialog">
-                    <div class="modal-content ">
-                        <div class="modal-body text-center">
-                            <h3>{{ detail.VehicleBrand }}</h3>
-                            <h3>{{ detail.VehicleModel }}</h3>
-                            <h3>{{ detail.show }}</h3>
+              <div class="modal fade" id="show{{ detail.PlateNumber.PlateNumber }}">
+                <div class="modal-dialog modal-xl ">
+                  <div class="modal-content ">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalToggleLabel2">Details for Plate Number: <b>{{ detail.PlateNumber.PlateNumber }}</b></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="row">
+                          <div class="col-md-6 text-center">
+                            <img src="{{ detail.VehicleImage }}" width="100%" alt="">
+                          </div>
+                          <div class="col-md-6">
+                            <ul>
+                              <h5>Vehicle Details</h5>
+                              <br>
+                              <li><h5>Plate Number: <b>{{ detail.PlateNumber.PlateNumber }}</b></h5></li>
+                              <li><h5>Vehicle Brand: <b>{{ detail.PlateNumber.VehicleBrand }}</b></h5></li>
+                              <li><h5>Vehicle Model: <b>{{ detail.PlateNumber.VehicleModel }}</b></h5></li>
+                              <li><h5>Gas Consumption: <b>{{ detail.PlateNumber.GasConsumption }}</b></h5></li>
+                              <hr>
+                              <h5>Vehicle Specifications</h5>
+                              <br>
+                              <li><h5>Chassis Number: <b>{{ detail.ChassisNumber }}</b></h5></li>
+                              <li><h5>ACU Company: <b>{{ detail.ACUCompany }}</b></h5></li>
+                              <li><h5>Wheeler Type: <b>{{ detail.WheelerType }}</b></h5></li>
+                              <li><h5>Engine: <b>{{ detail.Engine }}</b></h5></li>
+                              <hr>
+                              <h5>Driver Details</h5>
+                              {% for driver in ddriver %}
+                                  {% if driver.PlateNumber_id == detail.PlateNumber_id%}
+                                      <br>
+                                      <li><h5>Driver Name: <b>{{ driver.DriversName }}</b></h5></li>
+                                      <li><h5>Driver Age: <b>{{ driver.DriversAge }}</b></h5></li>
+                                      <li><h5>Driver Medical Condition: <b>{{driver.DriversMedicalCondition }}</b></h5></li>
+                                      <li><h5>Driver License Number: <b>{{ driver.DriversLicenseNumber }}</b></h5></li>
+                                  {% endif %}
+                              {% endfor %}
+                              <hr>
+                              <h5>Maintenance Schedule Details</h5>
+                              {% for sched in msched %}
+                                  {% if sched.PlateNumber_id == detail.PlateNumber_id%}
+                                      <br>
+                                      <li><h5>Date: <b>{{ sched.Date }}</b></h5></li>
+                                      <li><h5>Repair and Maintenance Type: <b>{{ sched.TypeofRepairandMaintenance }}</b></h5></li>
+                                  {% endif %}
+                              {% endfor %}
+                              <hr>
+                              <h5>Deployment Schedule Details</h5>
+                              {% for dep in deploy %}
+                                  {% if dep.PlateNumber_id == detail.PlateNumber_id%}
+                                      <br>
+                                      <li><h5>Date: <b>{{ dep.Date }}</b></h5></li>
+                                      <li><h5>Deployment Location: <b>{{ dep.DeploymentLocation }}</b></h5></li>
+                                  {% endif %}
+                              {% endfor %}
+                            </ul>
+                          </div>
                         </div>
-                        </div>
-                    </div>
-                  </div>                    
-              </div>
-            {% endfor %}
-            {% endfor %}
-        </tbody>
+                      
+                      </div>
+                      </div>
+                  </div>
+                </div>                    
+            </div>
+          {% endfor %}
+      </tbody>
     </table>
 </div>
 

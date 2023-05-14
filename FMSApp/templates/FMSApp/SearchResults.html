@@ -8,7 +8,7 @@
         <div class="col-10 mx-auto">
         </div>
         <div class="container py-4">
-            {% if searched %}
+        
                 <h3 class="card-title text-center">Search Results: {{searched}}</h3>
                 <br>
                 <table class="table table-bordered table-striped table-hover text-center" style="color:rgb(21, 21, 21);">
@@ -18,15 +18,16 @@
                             <th>Vehicle Brand</th>
                             <th>Vehicle Model</th>
                             <th>Gas Consumption</th>
+                            
                         </tr>
                     </thead>
                     <tbody>
-                        {% for vdetail in vdetails %}
+                        {% for d in data %}
                             <tr>
-                                <td>{{ vdetail.PlateNumber }}</td>
-                                <td>{{ vdetail.VehicleBrand }}</td>
-                                <td>{{ vdetail.VehicleModel }}</td>
-                                <td>{{ vdetail.GasConsumption }}</td>
+                                <td>{{ d.platenumber }}</td>
+                                <td>{{ d.vbrand }}</td>
+                                <td>{{ d.vmodel }}</td>
+                                <td>{{ d.gas }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -47,12 +48,30 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for ddetail in ddetails %}
+                        {% for d in data %}
+
                             <tr>
-                                <td>{{ ddetail.DriversName }}</td>
-                                <td>{{ ddetail.DriversAge }}</td>
-                                <td>{{ ddetail.DriversMedicalCondition }}</td>
-                                <td>{{ ddetail.DriversLicenseNumber }}</td>
+                                <td>
+                                    {% for vspec in d.ddetails_data %}
+                                    {{ vspec.DriversName }}
+                                    {% endfor %}
+
+                                </td>
+                                <td>
+                                    {% for vspec in d.ddetails_data %}
+                                    {{ vspec.DriversAge }}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for vspec in d.ddetails_data %}
+                                    {{ vspec.DriversMedicalCondition }}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for vspec in d.ddetails_data %}
+                                    {{ vspec.DriversLicenseNumber }}
+                                    {% endfor %}
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -75,21 +94,37 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for vspec in vspecs %}
+                        {% for d in data %}
+
                             <tr>
-                                <td>{{ vspec.ChassisNumber }}</td>
-                                <td>{{ vspec.ACUCompany }}</td>
-                                <td>{{ vspec.WheelerType }}</td>
-                                <td>{{ vspec.Engine }}</td>
+                                <td>
+                                    {% for vspec in d.vspecs_data %}
+                                    {{ vspec.ChassisNumber }}
+                                    {% endfor %}
+
+                                </td>
+                                <td>
+                                    {% for vspec in d.vspecs_data %}
+                                    {{ vspec.ACUCompany }}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for vspec in d.vspecs_data %}
+                                    {{ vspec.WheelerType }}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for vspec in d.vspecs_data %}
+                                    {{ vspec.Engine }}
+                                    {% endfor %}
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
 
 
-            {% else %}
-                <h3 class="card-title text-center">You did not search for anything</h3>
-            {% endif %}
+            
         </div>
     </div>
 </div>

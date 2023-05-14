@@ -1,7 +1,7 @@
 from pickle import TRUE
 from django.db import models
 from django.utils.timezone import now
-
+from django.utils import timezone
 
 class User(models.Model):
     username = models.CharField(max_length=300, unique=True)
@@ -116,8 +116,10 @@ class InputDeploymentSched(models.Model):
 
     def __str__(self):
         return f"{self.date} - {self.location}"
-
+    
 class DateUpdated(models.Model):
-    PlateNumber = models.ForeignKey(
-        InputVDetail, on_delete=models.CASCADE, blank=True, null=True)
-    date_updated = models.DateTimeField(default=now)
+    platenumber_id = models.IntegerField()
+    date_updated = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.platenumber_id} - {self.date_updated}'

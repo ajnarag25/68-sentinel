@@ -6,11 +6,14 @@ from .models import (
     InputVSpecs,
     InputDDetail,
     InputMSched,
+    DateUpdated
 )
 from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse
 from django.db.models import Q
-
+from datetime import date
+from datetime import datetime, timedelta
+from django.utils import timezone
 import csv
 
 def header_data(request):
@@ -29,6 +32,7 @@ def header_data(request):
 
     }
     return context
+
 
 def exportVDetails(request):
     vdetails = InputVDetail.objects.all()
@@ -101,28 +105,18 @@ def login(request):
 
 
 def main_menu(request):
-    vdetails = InputVDetail.objects.all()
-    ddetails = InputVSpecs.objects.all()
-    msched = InputMSched.objects.all()
-    dsched = InputDeploymentSched.objects.all()
-    #
-    # context = {
-    #    'vdetails': vdetails,
-    #    'ddetails': ddetails,
-    #   'msched': msched,
-    #   'dsched': dsched,
-    # }
-    # return render(request, 'FMSApp/main_menu.html', {'vdetails':vdetails})
-    return render(
-        request,
-        "FMSApp/main_menu.html",
-        {
-            "vdetails": vdetails,
-            "ddetails": ddetails,
-            "msched": msched,
-            "dsched": dsched,
-        },
-    )
+    ddetails = InputVSpecs.objects.select_related("PlateNumber").all()
+    ddriver = InputDDetail.objects.select_related("PlateNumber").all()
+    msched = InputMSched.objects.select_related("PlateNumber").all()
+    deployment = InputDeploymentSched.objects.select_related("PlateNumber").all()
+
+    context = {
+        "ddetails": ddetails,
+        "ddriver": ddriver,
+        "msched": msched,
+        "deploy": deployment,
+    }
+    return render(request, "FMSApp/main_menu.html", context)
 
 
 def logout(request):
@@ -143,13 +137,27 @@ def Input_VDetails(request):
             VehicleModel=VehicleModelInput,
             GasConsumption=GasConsumptionInput,
         )
+        get_id= InputVDetail.objects.filter(PlateNumber=PlateNumberInput).values_list('id', flat=True)
+        fetch_id = None
+        for gett in get_id:
+            fetch_id = gett
+        print(fetch_id)
+        
+        obj, created = DateUpdated.objects.get_or_create(platenumber_id=fetch_id)
+        if not created:
+            obj.date_updated = date.today()
+            obj.save()
     return render(request, "FMSApp/Input_VDetails.html")
 
 
+from django.contrib import messages
+
+
 def Input_VSpecs(request):
+    # Get all vehicle details
     get_Vdetails = InputVDetail.objects.values()
-    d = InputVSpecs.objects.values()
-    if (request.method == "POST") and request.FILES["upload"]:
+
+    if request.method == "POST":
         PlateNumberInput = request.POST.get("pN")
         ChassisNumberInput = request.POST.get("cN")
         ACUCompanyInput = request.POST.get("aC")
@@ -159,35 +167,114 @@ def Input_VSpecs(request):
         fss = FileSystemStorage()
         file = fss.save(upload.name, upload)
         file_url = fss.url(file)
-        InputVSpecs.objects.create(
-            PlateNumber_id=PlateNumberInput,
-            ChassisNumber=ChassisNumberInput,
-            ACUCompany=ACUCompanyInput,
-            WheelerType=WheelerTypeInput,
-            Engine=EngineInput,
-            VehicleImage=upload,
+
+        # Check if the input vehicle specs already exist
+        existing_input = InputVSpecs.objects.filter(
+            PlateNumber_id=PlateNumberInput
+        ).exists()
+
+        if existing_input:
+            error_message = "Input vehicle specifications already exists"
+            print(error_message)
+            return render(
+                request,
+                "FMSApp/Input_VSpecs.html",
+                {
+                    "file_url": file_url,
+                    "plate_numbers": get_Vdetails,
+                    "error_message": error_message,
+                },
+            )
+        else:
+            # Create a new input vehicle specs object
+            InputVSpecs.objects.create(
+                PlateNumber_id=PlateNumberInput,
+                ChassisNumber=ChassisNumberInput,
+                ACUCompany=ACUCompanyInput,
+                WheelerType=WheelerTypeInput,
+                Engine=EngineInput,
+                VehicleImage=upload,
+            )
+            print(PlateNumberInput)
+            obj, created = DateUpdated.objects.get_or_create(platenumber_id=PlateNumberInput)
+            if not created:
+                obj.date_updated = date.today()
+                obj.save()
+
+        # Remove the selected option from the dropdown menu
+        get_Vdetails = InputVDetail.objects.exclude(id=PlateNumberInput).values()
+
+        return render(
+            request,
+            "FMSApp/Input_VSpecs.html",
+            {
+                "file_url": file_url,
+                "plate_numbers": get_Vdetails,
+            },
         )
-        return render(request, "FMSApp/Input_VSpecs.html", {"file_url": file_url})
-    context = {
-        "plate_numbers": get_Vdetails,
-    }
+
+    # Render the form with all vehicle details
+    context = {"plate_numbers": get_Vdetails}
     return render(request, "FMSApp/Input_VSpecs.html", context)
 
 
 def Input_DDetails(request):
-    d = InputDDetail.objects.all()
+    get_Vdetails = InputVDetail.objects.values()
+
     if request.method == "POST":
+        PlateNumberInput = request.POST.get("pN")
         DriverNameInput = request.POST.get("dN")
         DriverAgeInput = request.POST.get("dA")
         MedicalConditionInput = request.POST.get("mC")
         LicenseNumberInput = request.POST.get("lN")
-        InputDDetail.objects.create(
-            DriversName=DriverNameInput,
-            DriversAge=DriverAgeInput,
-            DriversMedicalCondition=MedicalConditionInput,
-            DriversLicenseNumber=LicenseNumberInput,
+
+        # Check if the input driver details already exist for the given plate number
+        existing_input = InputDDetail.objects.filter(
+            PlateNumber_id=PlateNumberInput
+        ).exists()
+
+        if existing_input:
+            error_message = (
+                "Input driver details already exist for the selected vehicle"
+            )
+            print(error_message)
+            return render(
+                request,
+                "FMSApp/Input_DDetails.html",
+                {
+                    "plate_numbers": get_Vdetails,
+                    "error_message": error_message,
+                },
+            )
+        else:
+            # Create a new input driver details object
+            InputDDetail.objects.create(
+                PlateNumber_id=PlateNumberInput,
+                DriversName=DriverNameInput,
+                DriversAge=DriverAgeInput,
+                DriversMedicalCondition=MedicalConditionInput,
+                DriversLicenseNumber=LicenseNumberInput,
+            )
+            print(PlateNumberInput)
+            obj, created = DateUpdated.objects.get_or_create(platenumber_id=PlateNumberInput)
+            if not created:
+                obj.date_updated = date.today()
+                obj.save()
+            
+        # Remove the selected option from the dropdown menu
+        get_Vdetails = InputVDetail.objects.exclude(id=PlateNumberInput).values()
+
+        return render(
+            request,
+            "FMSApp/Input_DDetails.html",
+            {
+                "plate_numbers": get_Vdetails,
+            },
         )
-    return render(request, "FMSApp/Input_DDetails.html")
+
+    # Render the form with all vehicle details
+    context = {"plate_numbers": get_Vdetails}
+    return render(request, "FMSApp/Input_DDetails.html", context)
 
 
 def SearchResults(request):
@@ -269,30 +356,158 @@ def SearchResults(request):
 
 def FilteredSearchResults(request):
     if request.method == "POST":
-        query = request.POST.getlist("selected")
-        vdetails = InputVDetail.objects.filter(
-            Q(PlateNumber__icontains=query)
-            | Q(VehicleBrand__icontains=query)
-            | Q(VehicleModel__icontains=query)
-            | Q(GasConsumption__icontains=query)
-        )
-        ddetails = InputDDetail.objects.filter(
-            Q(DriversName__icontains=query)
-            | Q(DriversAge__icontains=query)
-            | Q(DriversMedicalCondition__icontains=query)
-            | Q(DriversLicenseNumber__icontains=query)
-        )
-        vspecs = InputVSpecs.objects.filter(
-            Q(ChassisNumber__icontains=query)
-            | Q(ACUCompany__icontains=query)
-            | Q(WheelerType__icontains=query)
-            | Q(Engine__icontains=query)
-        )
-        return render(
-            request,
-            "FMSApp/SearchResults.html",
-            {"vdetails": vdetails, "ddetails": ddetails, "vspecs": vspecs},
-        )
+        date_updated_list = []
+        vmodel_list = []
+        vbrand_list = []
+        vwheeler_list = []
+        vengine_list = []
+        vrepair_list = []
+        get_common_indices = []
+
+        date_updated = request.POST.get("date_updated")
+        
+        vmodel = request.POST.getlist("vmodel")
+
+        
+        vbrand = request.POST.getlist("vbrand")
+
+        
+        vwheeler = request.POST.getlist("vwheeler")
+
+        
+        vengine = request.POST.getlist("vengine")
+
+
+        vrepair = request.POST.getlist("vrepair")
+
+        
+    
+
+        now = datetime.now()
+        #declaring the dates 1 week, one day, and 1 month ago
+
+        last_24_hours = now - timedelta(hours=24)
+        last_24_hours = timezone.make_aware(last_24_hours)
+        
+        one_week_ago = now - timedelta(days=7)
+        one_week_ago = timezone.make_aware(one_week_ago)
+
+
+        one_month_ago = timezone.now() - timedelta(days=30)
+        
+        #if condition for the date update
+
+        if(date_updated == 'oneday'):
+            # fetch_id_date = DateUpdated.objects.filter(date_updated__gte=last_24_hours).values_list('PlateNumber_id', flat=True).distinct()
+            fetch_id_date = DateUpdated.objects.filter(date_updated__range=[last_24_hours, now]).distinct()
+            for obj in fetch_id_date:
+                date_updated_list.append(obj.platenumber_id)
+            print(date_updated_list)
+
+        elif(date_updated == 'thisweek'):
+            # fetch_id_date = DateUpdated.objects.filter(date_updated__gte=one_week_ago).values_list('PlateNumber_id', flat=True).distinct()
+            fetch_id_date = DateUpdated.objects.filter(date_updated__range=[one_week_ago, now]).distinct()
+            for obj in fetch_id_date:
+                date_updated_list.append(obj.platenumber_id)
+            print(date_updated_list)
+
+        elif(date_updated == 'thismonth'):
+            fetch_id_date = DateUpdated.objects.filter(date_updated__range=[one_month_ago, now]).distinct()
+            for obj in fetch_id_date:
+                date_updated_list.append(obj.platenumber_id)
+            print(date_updated_list)
+        
+        else:
+            for obj in DateUpdated.objects.all():
+                date_updated_list.append(obj.platenumber_id)
+            print(date_updated_list)
+        
+        
+
+
+
+        #if condition for the vehicle model
+        if(len(vmodel) == 0 or vmodel[0] == "all"):
+            for obj in InputVDetail.objects.all():
+                vmodel_list.append(obj.id)
+            print(vmodel_list)
+        else:
+            
+            vmodels = InputVDetail.objects.filter(VehicleModel__in=vmodel)
+            vmodel_list = [vmodel.id for vmodel in vmodels]
+            print(vmodel_list)
+
+
+
+
+        #if condition in vehicle brand
+
+        if(len(vbrand) == 0 or vbrand[0] == "all"):
+            for obj in InputVDetail.objects.all():
+                vbrand_list.append(obj.id)
+            print(vbrand_list)
+        else:
+           
+            vbrands = InputVDetail.objects.filter(VehicleBrand__in=vbrand)
+            vbrand_list = [vbrand.id for vbrand in vbrands]
+            print(vbrand_list)
+
+
+        # if condition for wheeler type
+
+        if(len(vwheeler) == 0 or vwheeler[0] == "all"):
+            for obj in InputVSpecs.objects.all():
+                vwheeler_list.append(obj.PlateNumber_id)
+            print(vbrand_list)
+        else:
+           
+            vwheelers = InputVSpecs.objects.filter(WheelerType__in=vwheeler)
+            vwheeler_list = [vwheeler.PlateNumber_id for vwheeler in vwheelers]
+            print(vwheeler_list)
+
+        
+        # if condition for engine type
+        if(len(vengine) == 0 or vengine[0] == "all"):
+            for obj in InputVSpecs.objects.all():
+                vengine_list.append(obj.PlateNumber_id)
+            print(vengine_list)
+        else:
+           
+            vengines = InputVSpecs.objects.filter(Engine__in=vengine)
+            vengine_list = [vengine.PlateNumber_id for vengine in vengines]
+            print(vengine_list)
+        
+
+        # if condition for repair
+        if(len(vrepair) == 0 or vrepair[0] == "all"):
+            vrepairs = InputMSched.objects.values_list('PlateNumber_id', flat=True).distinct()
+            for vrepair in vrepairs:
+                vrepair_list.append(vrepair)
+            print(vrepair_list)
+        else:
+            vrepairs =InputMSched.objects.filter(TypeofRepairandMaintenance__in=vrepair).values_list('PlateNumber_id', flat=True).distinct()
+            for vrepair in vrepairs:
+                vrepair_list.append(vrepair)
+            print(vrepair_list)
+
+        #this code is to collect all common plate number ids per lists
+
+        for get_common in date_updated_list:
+            if get_common in vmodel_list and get_common in vbrand_list and get_common in vwheeler_list and get_common in vengine_list and get_common in vrepair_list:
+                get_common_indices.append(get_common)
+        print(get_common_indices)
+        
+
+        #IN THIS SECTION, WE WILL SEND THE COMMON INDICES TO THE TABLE TO DISPLAY THE DATA INSIDE THE HTML TABLE
+        vdetails = InputVDetail.objects.filter(id__in=get_common_indices) 
+        data = []
+        for vdetail in vdetails:
+            vspecs = InputVSpecs.objects.filter(PlateNumber_id=vdetail.id)
+            ddetails = InputDDetail.objects.filter(PlateNumber_id=vdetail.id)
+            data.append({'platenumber':vdetail.PlateNumber , 'vbrand': vdetail.VehicleBrand , 'vmodel':vdetail.VehicleModel ,'gas':vdetail.GasConsumption, 'vspecs_data':vspecs , 'ddetails_data':ddetails})
+        
+        print(data)
+        return render(request,"FMSApp/SearchResults.html",{'data': data})
     else:
         return render(request, "FMSApp/SearchResults.html")
 
@@ -381,16 +596,60 @@ def MSchedPage(request):
     return render(request, "FMSApp/MSchedPage.html", {"repairs": repairs})
 
 
+from .models import InputMSched
+
+
 def Input_MSched(request):
+    get_Vdetails = InputVDetail.objects.values()
+    # Check if the input driver details already exist for the given plate number
     if request.method == "POST":
+        PlateNumberInput = request.POST.get("pN")
         input_date = request.POST.get("date")
         repair_input = request.POST["select"]
-        if repair_input == "customInput":
-            repair_input = request.POST["customInput"]
-        InputMSched.objects.create(
-            Date=input_date, TypeofRepairandMaintenance=repair_input
-        )
-    return render(request, "FMSApp/Input_MSched.html")
+        existing_input = InputMSched.objects.filter(
+            PlateNumber_id=PlateNumberInput
+        ).exists()
+
+        if existing_input:
+            error_message = (
+                "Input maintenance schedule already exists for the selected vehicle"
+            )
+            print(error_message)
+            return render(
+                request,
+                "FMSApp/Input_MSched.html",
+                {
+                    "plate_numbers": get_Vdetails,
+                    "error_message": error_message,
+                },
+            )
+        else:
+            # Create a new input maintenance schedule object
+            InputMSched.objects.create(
+                PlateNumber_id=PlateNumberInput,
+                Date=input_date,
+                TypeofRepairandMaintenance=repair_input,
+            )
+            print(PlateNumberInput)
+            obj, created = DateUpdated.objects.get_or_create(platenumber_id=PlateNumberInput)
+            if not created:
+                obj.date_updated = date.today()
+                obj.save()
+            # Remove the selected option from the dropdown menu
+            get_Vdetails = InputVDetail.objects.exclude(id=PlateNumberInput).values()
+            return render(
+                request,
+                "FMSApp/Input_MSched.html",
+                {
+                    "plate_numbers": get_Vdetails,
+                },
+            )
+
+    # Remove the selected option from the dropdown menu
+    PlateNumberInput = None
+    get_Vdetails = InputVDetail.objects.values()
+    context = {"plate_numbers": get_Vdetails}
+    return render(request, "FMSApp/Input_MSched.html", context)
 
 
 def DeploymentPage(request):
@@ -399,13 +658,54 @@ def DeploymentPage(request):
 
 
 def Input_Deployment(request):
+    get_Vdetails = InputVDetail.objects.values()
+    # Check if the input driver details already exist for the given plate number
     if request.method == "POST":
+        PlateNumberInput = request.POST.get("pN")
         date_input = request.POST.get("date")
         location_input = request.POST.get("dL")
-        InputDeploymentSched.objects.create(
-            Date=date_input, DeploymentLocation=location_input
-        )
-    return render(request, "FMSApp/Input_Deployment.html")
+        existing_input = InputDeploymentSched.objects.filter(
+            PlateNumber_id=PlateNumberInput
+        ).exists()
+
+        if existing_input:
+            error_message = "Input deployment already exists for the selected vehicle"
+            print(error_message)
+            return render(
+                request,
+                "FMSApp/Input_Deployment.html",
+                {
+                    "plate_numbers": get_Vdetails,
+                    "error_message": error_message,
+                },
+            )
+        else:
+            # Create a new input maintenance schedule object
+            InputDeploymentSched.objects.create(
+                PlateNumber_id=PlateNumberInput,
+                Date=date_input,
+                DeploymentLocation=location_input,
+            )
+            print(PlateNumberInput)
+            obj, created = DateUpdated.objects.get_or_create(platenumber_id=PlateNumberInput)
+            if not created:
+                obj.date_updated = date.today()
+                obj.save()
+            # Remove the selected option from the dropdown menu
+            get_Vdetails = InputVDetail.objects.exclude(id=PlateNumberInput).values()
+            return render(
+                request,
+                "FMSApp/Input_Deployment.html",
+                {
+                    "plate_numbers": get_Vdetails,
+                },
+            )
+
+    # Remove the selected option from the dropdown menu
+    PlateNumberInput = None
+    get_Vdetails = InputVDetail.objects.values()
+    context = {"plate_numbers": get_Vdetails}
+    return render(request, "FMSApp/Input_Deployment.html", context)
 
 
 def Update_Deployment(request, pk):
