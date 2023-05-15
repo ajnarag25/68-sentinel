@@ -1,3 +1,3 @@
 # 68-sentinel
 
-Plate number vechicle system configuration
+Plate number vehicle system configuration
