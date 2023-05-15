@@ -99,8 +99,9 @@ class InputDDetail(models.Model):
 class InputMSched(models.Model):
     PlateNumber = models.ForeignKey(
         InputVDetail, on_delete=models.CASCADE, blank=True, null=True)
-    Date = models.DateTimeField(default=now)
-    TypeofRepairandMaintenance = models.CharField(max_length=300)
+    Date = models.DateField(default=now)
+    status = models.CharField(max_length=300,null=True)
+    TypeofRepairandMaintenance = models.CharField(max_length=300, null=True)
     objects = models.Manager()
 
     def __str__(self):

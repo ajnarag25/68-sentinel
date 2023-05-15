@@ -17,13 +17,38 @@ from django.utils import timezone
 import csv
 
 def header_data(request):
+    today = timezone.now().date()
+
+    # get the yesterday's date
+    yesterday = today - timezone.timedelta(days=1)
+    # calculate the date 7 days from now
+    seven_days_later = today + timedelta(days=7)
+
+    # filter the rows where status is "pending" and Date is within the range of yesterday to 7 days after
+    InputMSched.objects.filter(status="pending", Date__range=[today, seven_days_later]).update(status="unread")
+
+    # filter and update all the rows from yesterday to the past(earlier than yesterday)
+    InputMSched.objects.filter(Date__lt=yesterday).update(status='read')
+
+    # filter the rows where Date is within the range of now to 7 days after and status is "unread"
+    unread_rows = InputMSched.objects.filter(Date__range=[today, seven_days_later], status="unread")
+    unread_rows_count = unread_rows.count()
+
+
+    # filter the rows where Date is within the range of now to 7 days after
+    a_week_notif = InputMSched.objects.filter(Date__range=[today, seven_days_later]).order_by('Date')
+    
+        
+
     vehicle_model = InputVDetail.objects.values('VehicleModel').distinct()
     vehicle_brand = InputVDetail.objects.values('VehicleBrand').distinct()
     vehicle_wheeler = InputVSpecs.objects.values('WheelerType').distinct()
     vehicle_engine = InputVSpecs.objects.values('Engine').distinct()
     vehicle_repair = InputMSched.objects.values('TypeofRepairandMaintenance').distinct()
     context = {
-
+        'now': today,
+        'a_week_notif' : a_week_notif,
+        'unread_rows_count' : unread_rows_count,
         'vehicle_model' : vehicle_model,
         'vehicle_brand' : vehicle_brand,
         'vehicle_wheeler' : vehicle_wheeler,
@@ -505,7 +530,7 @@ def FilteredSearchResults(request):
             vspecs = InputVSpecs.objects.filter(PlateNumber_id=vdetail.id)
             ddetails = InputDDetail.objects.filter(PlateNumber_id=vdetail.id)
             data.append({'platenumber':vdetail.PlateNumber , 'vbrand': vdetail.VehicleBrand , 'vmodel':vdetail.VehicleModel ,'gas':vdetail.GasConsumption, 'vspecs_data':vspecs , 'ddetails_data':ddetails})
-        
+            print(ddetails)
         print(data)
         return render(request,"FMSApp/SearchResults.html",{'data': data})
     else:
@@ -591,9 +616,14 @@ def deleteDDetailButton(request, pk):
     return redirect("Ddetails")
 
 
-def MSchedPage(request):
-    repairs = InputMSched.objects.all()
-    return render(request, "FMSApp/MSchedPage.html", {"repairs": repairs})
+def MSchedPage(request,id):
+    print(id)
+    InputMSched.objects.filter(id=id).update(status="read")
+    msched_list = InputMSched.objects.order_by('-Date').all()
+    datas = {
+        'msched_list': msched_list
+    }
+    return render(request, "FMSApp/MSchedPage.html", datas)
 
 
 from .models import InputMSched
@@ -709,18 +739,15 @@ def Input_Deployment(request):
 
 
 def Update_Deployment(request, pk):
-    if request.method == "POST":
-        date_input = request.POST.get("date")
-        location_input = request.POST.get("dL")
-        InputDeploymentSched.objects.filter(pk=pk).update(
-            Date=date_input, DeploymentLocation=location_input
-        )
-        return redirect("DeploymentPage")
+    if(request.method=="POST"):
+        date_input = request.POST.get('date')
+        location_input = request.POST.get('dL')
+        InputDeploymentSched.objects.filter(pk=pk).update(Date=date_input, DeploymentLocation=location_input)
+        return redirect('DeploymentPage')
     else:
         deployments = get_object_or_404(InputDeploymentSched, pk=pk)
-        return render(
-            request, "FMSApp/Update_Deployment.html", {"deployments": deployments}
-        )
+        return render(request, 'FMSApp/Update_Deployment.html', {'deployments': deployments})
+        
 
 
 def exportDeployment(request):
@@ -738,19 +765,30 @@ def exportDeployment(request):
 def Update_Maintenance(request, pk):
     maintenance = get_object_or_404(InputMSched, pk=pk)
     if request.method == "POST":
-        date_input2 = request.POST.get("date")
-        type_input = request.POST.get("select")
+        date_input2 = request.POST.get('date')
+        type_input = request.POST.get('select')
         if type_input == "Other":
-            type_input = request.POST.get("customInput")
-        InputMSched.objects.filter(pk=pk).update(
-            Date=date_input2, TypeofRepairandMaintenance=type_input
-        )
-        return redirect("MSchedPage")
+            type_input = request.POST.get('customInput')
+        sched = InputMSched.objects.get(pk=pk)
+        if(sched is not None):
+            sched.Date=date_input2
+            sched.TypeofRepairandMaintenance=type_input
+            sched.save()
+            date_input2_obj = datetime.strptime(date_input2, '%Y-%m-%d')
+            today = datetime.today().date()
+            date_diff = (date_input2_obj.date() - today).days
+            if date_diff >= 0 and date_diff <= 7:
+                InputMSched.objects.filter(id=pk).update(status='unread')
+            else:
+                pass
+
+        return redirect('MSchedPage')
     context = {
-        "maintenance": maintenance,
-        "maintenance_types": ["Body Paint", "Change Oil", "Add Brake Fluid"],
+        'maintenance': maintenance,
+        'maintenance_types': ["Body Paint", "Change Oil", "Add Brake Fluid"]
     }
-    return render(request, "FMSApp/Update_Maintenance.html", context)
+    return render(request, 'FMSApp/Update_Maintenance.html', context)
+
 
 
 def exportMaintenance(request):

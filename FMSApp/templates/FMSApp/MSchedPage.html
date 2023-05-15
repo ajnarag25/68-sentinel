@@ -2,6 +2,13 @@
 {% load static %}
 {% block content %}
 
+<style>
+    /* Define CSS class for highlighted cells */
+    .highlight {
+      background-color: rgb(97, 148, 141);
+    }
+  </style>
+
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -13,7 +20,8 @@
             <a class="btn btn-dark" style="color:white" href="{% url 'exportMaintenance' %}"> Export </a>
         </div>
     </div>
-    <table class="table table-bordered table-striped table-hover text-center" style="color:rgb(21, 21, 21);">
+
+    <table class="table table-bordered table-striped table-hover text-center" id="myTable" style="color:rgb(21, 21, 21);">
         <thead>
             <tr>
                 <th>Maintenance Date</th>
@@ -21,14 +29,39 @@
                 <th>Update</th>
             </tr>
         </thead>
-        {% for maintenance in repairs %}
-        <tr>
-            <td>{{ maintenance.Date }}</td>
-            <td>{{ maintenance.TypeofRepairandMaintenance }}</td>
-            <td><a class="btn" style="background-color: #444444;color: white;" href="{% url 'Update_Maintenance' pk=maintenance.pk %}">Update</a></td>
+        <tbody>
+        {% for msched in msched_list %}
+        <tr id="{{msched.id}}">
+            <td>{{msched.id}}</td>
+            <td>{{ msched.Date }}</td>
+            <td>{{ msched.TypeofRepairandMaintenance }}</td>
+            <td><a class="btn" style="background-color: #444444;color: white;" href="{% url 'Update_Maintenance' pk=msched.pk %}">Update</a></td>
         </tr>
-    {% endfor %}
+        
+        {% endfor %}
         </tbody>
+        <script>
+
+            // get the id from the URL
+                let url = window.location.href;
+                let id = url.substring(url.lastIndexOf('/') + 1);
+
+                // find the tr element with the matching id
+                let tr = document.getElementById(id);
+
+                // highlight the tr element for 3 seconds
+                if (tr) {
+                tr.style.backgroundColor = "rgba(97, 148, 141,0.5)";
+                tr.scrollIntoView();
+                setTimeout(function() {
+                    tr.style.backgroundColor = "";
+                }, 3500);
+                }
+          </script>
     </table>
+
+    
+     
+
 </div>
 {% endblock %}

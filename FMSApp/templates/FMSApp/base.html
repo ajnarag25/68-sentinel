@@ -10,7 +10,9 @@
         <link rel="stylesheet" href="{% static '/bootstrap/css/bootstrap.css' %}">
         <link rel="stylesheet" href="{% static '/bootstrap/css/custom.css' %}">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+
 
         <script src="{% static '/bootstrap/jquery-3.4.1.slim.min.js' %}"></script>
         <script src="{% static '/bootstrap/popper.min.js' %}"></script>
@@ -136,7 +138,7 @@
                         <div class="col-3"></div>
                             <div class="col-9">
                                 <h4>NAVIGATION BAR</h4>
-                                <p>{{sample}}</p>
+                               
                             </div>
                     </div>
 
@@ -209,6 +211,67 @@
           
         <div class="row">
           <div class="col-md-10 d-flex align-items-center ml-auto">
+
+
+            <!------NOTIFICATIONS------->
+
+            <div class="btn-group">
+              {% if unread_rows_count == 0 %}
+              <a type="button" class="m-3 text-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bell"></i><span class="badge badge-danger bell" ></span></a>
+              {% else %}
+              <a type="button" class="m-3 text-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-bell"></i><span class="badge badge-danger bell" >{{ unread_rows_count }}</span></a>
+              {% endif %}
+              <div class="dropdown-menu dropdown-menu-right">
+              
+              <div class="list-group">
+                
+                {% for a_week in a_week_notif %}
+                {% if a_week.status == 'unread' %}
+                  <a href="{% url 'MSchedPage' id=a_week.id %}" class="font-weight-bold list-group-item list-group-item-action flex-column align-items-start" style="background-color: rgba(83, 173, 185, 0.349);">
+                    
+                    <div class="d-flex w-100 justify-content-between">
+                      
+                      <small>
+                        
+                        {{now|timesince:a_week.Date}} from now
+                        
+                      </small>
+                      
+                    </div>
+                    <p class="mb-1">{{a_week.TypeofRepairandMaintenance}}</p>
+                    <small>{{a_week.Date}}</small>
+                  </a>
+                  {% else %}
+
+                  <a href="{% url 'MSchedPage' id=a_week.id %}" class="font-weight-bold list-group-item list-group-item-action flex-column align-items-start">
+                    
+                    <div class="d-flex w-100 justify-content-between">
+                      
+                      <small>
+                        
+                        {{now|timesince:a_week.Date}} from now
+                        
+                      </small>
+                      
+                    </div>
+                    <p class="mb-1">{{a_week.TypeofRepairandMaintenance}}</p>
+                    <small>{{a_week.Date}}</small>
+                  </a>
+                  {% endif %}
+                  {% endfor %}
+                  
+                  
+               
+                
+              </div>
+              </div> 
+            </div>
+
+
+
+
+
+
             <form class='input-group mt-3' method="POST" action="{% url 'SearchResults' %}"> {% csrf_token %}
               <input type="search" class="form-control rounded" placeholder="Search" name="searched">
               <div class="input-group-append">
