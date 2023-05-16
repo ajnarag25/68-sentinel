@@ -653,12 +653,35 @@ def Input_MSched(request):
                 },
             )
         else:
-            # Create a new input maintenance schedule object
-            InputMSched.objects.create(
+            
+            input_date_obj = datetime.strptime(input_date, '%Y-%m-%d')
+            today = datetime.today().date()
+            date_diff = (input_date_obj.date() - today).days
+            if date_diff >= 0 and date_diff <= 7:
+                # Create a new input maintenance schedule object
+                InputMSched.objects.create(
                 PlateNumber_id=PlateNumberInput,
                 Date=input_date,
                 TypeofRepairandMaintenance=repair_input,
-            )
+                status = "unread"
+                )
+            elif date_diff > 7:
+                # Create a new input maintenance schedule object
+                InputMSched.objects.create(
+                PlateNumber_id=PlateNumberInput,
+                Date=input_date,
+                TypeofRepairandMaintenance=repair_input,
+                status = "pending"
+                )
+            elif date_diff < 0:
+                # Create a new input maintenance schedule object
+                InputMSched.objects.create(
+                PlateNumber_id=PlateNumberInput,
+                Date=input_date,
+                TypeofRepairandMaintenance=repair_input,
+                status = "read"
+                )
+            
             print(PlateNumberInput)
             obj, created = DateUpdated.objects.get_or_create(platenumber_id=PlateNumberInput)
             if not created:
