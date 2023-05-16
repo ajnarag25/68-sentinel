@@ -18,7 +18,6 @@ import csv
 
 def header_data(request):
     today = timezone.now().date()
-
     # get the yesterday's date
     yesterday = today - timezone.timedelta(days=1)
     # calculate the date 7 days from now
